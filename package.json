@@ -1,0 +1,24 @@
+{
+  "name": "wehelp_3_the-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vivian-wj-lin/WeHelp_3_the-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vivian-wj-lin/WeHelp_3_the-project/issues"
+  },
+  "homepage": "https://github.com/vivian-wj-lin/WeHelp_3_the-project#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
