@@ -5,12 +5,17 @@ const middleware = require("./middleware")
 
 app.set("view engine", "ejs")
 app.set("views", "./views")
+// app.set("layout", "layouts")
+// app.set("layout", "layouts/main-layout")
+app.set("layout", "layouts/login-layout")
 app.use(expressLayouts)
 
 app.use(express.static("public"))
 
 //Routes
 const loginRoute = require("./routes/loginRoutes")
+
+app.use("/login", loginRoute)
 
 app.get("/", middleware.requireLogin, (req, res, next) => {
   let payload = {
