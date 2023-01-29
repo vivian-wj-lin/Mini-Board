@@ -3,14 +3,15 @@ const app = express()
 const expressLayouts = require("express-ejs-layouts")
 const middleware = require("./middleware")
 const path = require("path")
+const bodyParser = require("body-parser")
 
 app.set("view engine", "ejs")
 app.set("views", "./views")
-
 // app.set("layout", "register")
 // app.use(expressLayouts)
 
 app.use(express.static(path.join(__dirname, "public")))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 //Routes
 const loginRoute = require("./routes/loginRoutes")

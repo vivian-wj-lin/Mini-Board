@@ -2,30 +2,30 @@
 <html lang="en">
   <head>
     <%- include('includes/head.ejs') %>
-    <title>Login</title>
+    <title>Login登入</title>
     <link rel="stylesheet" href="/css/login.css" />
   </head>
   <body>
     <div class="wrapper">
       <!-- login contents starts -->
       <div class="loginContainer">
-        <h1>Login</h1>
+        <h1>Login登入</h1>
         <form action="" ,method="post">
           <input
             type="text"
             name="logUsername"
-            placeholder="Username or email"
+            placeholder="Username or email 使用者名稱或電子郵件"
             required=""
           />
           <input
             type="text"
             name="logPassword"
-            placeholder="Password"
+            placeholder="Password 密碼"
             required=""
           />
-          <input type="submit" value="Login" />
+          <input type="submit" value="Login 登入" />
         </form>
-        <a href="/register">Need an account? Register here.</a>
+        <a href="/register">Need an account還沒註冊? Register here.點我註冊</a>
         <!-- login contents ends -->
       </div>
     </div>

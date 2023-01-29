@@ -2,53 +2,81 @@
 <html lang="en">
   <head>
     <%- include('includes/head.ejs') %>
-    <title>Register</title>
+    <title>Register 註冊</title>
     <link rel="stylesheet" href="/css/login.css" />
   </head>
+
   <body>
     <div class="wrapper">
       <!-- register contents starts -->
       <div class="loginContainer">
-        <h1>Register</h1>
-        <form action="" ,method="post">
+        <h1>Register 註冊</h1>
+        <form
+          action=""
+          method="post"
+          class="registerForm"
+          onsubmit="event.preventDefault();validatePassword();"
+        >
+          <p class="errorMessage"></p>
           <input
             type="text"
             name="FirstName"
-            placeholder="first name"
+            placeholder="Firstname 名"
             required=""
           />
 
           <input
             type="text"
             name="LastName"
-            placeholder="last name"
+            placeholder="Lastname 姓"
             required=""
           />
           <input
             type="text"
             name="username"
-            placeholder="Username"
+            placeholder="Username 使用者名稱"
             required=""
           />
-          <input type="email" name="email" placeholder="Email" required="" />
           <input
+            type="email"
+            name="email"
+            placeholder="Email 電子郵件"
+            required=""
+          />
+          <input
+            class="password"
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Password 密碼"
             required=""
           />
           <input
+            class="passwordConf"
             type="password"
             name="passwordConf"
-            placeholder="Confirm password"
+            placeholder="Confirm password 再次確認密碼"
             required=""
           />
-          <input type="submit" value="Login" />
+          <input type="submit" value="register 註冊" />
         </form>
-        <a href="/login">Already have an account? Login here.</a>
+        <a href="/login"
+          >Already have an account 已有帳號? Login here.點我登入</a
+        >
         <!-- register contents ends -->
       </div>
     </div>
-    <%- include('includes/body.ejs') %>
+    <%- include('includes/body.ejs')%>
+    <script>
+      let passwordField = document.querySelector(".password")
+      let passwordConfirmField = document.querySelector(".passwordConf")
+      let registerForm = document.querySelector(".registerForm")
+      function validatePassword() {
+        if (passwordField.value != passwordConfirmField.value) {
+          alert("密碼不符合，請再次輸入")
+        } else {
+          registerForm.submit()
+        }
+      }
+    </script>
   </body>
 </html>
