@@ -6,11 +6,9 @@ const path = require("path")
 
 app.set("view engine", "ejs")
 app.set("views", "./views")
-// app.set("layout", "layouts")
-// app.set("layout", "layouts/main-layout")
-// app.set("layout", "layouts/login-layout")
-app.set("layout", "register")
-app.use(expressLayouts)
+
+// app.set("layout", "register")
+// app.use(expressLayouts)
 
 app.use(express.static(path.join(__dirname, "public")))
 
