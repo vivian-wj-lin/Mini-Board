@@ -1,5 +1,6 @@
 body {
-  background-color: #0099ff;
+  /* background-color: #0099ff; */
+  background-color: #b4ca65;
 }
 
 .wrapper {
@@ -36,7 +37,8 @@ input[type="password"] {
 }
 
 input[type="submit"] {
-  background-color: #0099ff;
+  /* background-color: #0099ff; */
+  background-color: #b4ca65;
   color: #fff;
   border: none;
   border-radius: 2px;

@@ -18,7 +18,7 @@
           onsubmit="event.preventDefault();validatePassword();"
         >
           <p class="errorMessage"></p>
-          <input
+          <!-- <input
             type="text"
             name="FirstName"
             placeholder="First name 名"
@@ -30,7 +30,7 @@
             name="LastName"
             placeholder="Last name 姓"
             required=""
-          />
+          /> -->
           <input
             type="text"
             name="username"
@@ -65,7 +65,7 @@
         <!-- register contents ends -->
       </div>
     </div>
-    <%- include('includes/body.ejs')%>
+    <%- include('includes/script.ejs')%>
     <script>
       let passwordField = document.querySelector(".password")
       let passwordConfirmField = document.querySelector(".passwordConf")
