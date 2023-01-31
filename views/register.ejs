@@ -11,26 +11,18 @@
       <!-- register contents starts -->
       <div class="loginContainer">
         <h1>Register 註冊</h1>
+
         <form
           action=""
           method="post"
           class="registerForm"
           onsubmit="event.preventDefault();validatePassword();"
         >
-          <p class="errorMessage"></p>
-          <!-- <input
-            type="text"
-            name="FirstName"
-            placeholder="First name 名"
-            required=""
-          />
-
-          <input
-            type="text"
-            name="LastName"
-            placeholder="Last name 姓"
-            required=""
-          /> -->
+          <% if (typeof errorMessage !== 'undefined') { %>
+          <div class="errorMessage"><%= errorMessage %></div>
+          <% } %> <% if (typeof successMessage !== 'undefined') { %>
+          <div class="successMessage"><%= successMessage %></div>
+          <% } %>
           <input
             type="text"
             name="username"

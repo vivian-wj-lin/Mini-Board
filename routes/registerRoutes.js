@@ -3,6 +3,7 @@ const app = express()
 const expressLayouts = require("express-ejs-layouts")
 const router = express.Router()
 const bodyParser = require("body-parser")
+const { userPool } = require("../schemas/user")
 
 app.set("view engine", "ejs")
 app.set("views", "./views")
@@ -17,16 +18,33 @@ router.get("/", (req, res, next) => {
 
 router.post("/", (req, res, next) => {
   console.log(req.body)
-  let firstName = req.body.FirstName.trim()
-  let lastName = req.body.LastName.trim()
   let username = req.body.username.trim()
   let email = req.body.email.trim()
   let password = req.body.password
   let payload = req.body
 
-  if (firstName && lastName && username && email && password) {
+  if (username && email && password) {
+    let sql = `SELECT * FROM user WHERE username = ? OR email = ?`
+    let values = [username, email]
+    userPool.query(sql, values, (error, results) => {
+      if (error) throw error
+      if (results.length > 0) {
+        payload.errorMessage = "使用者名稱或電子信箱已存在"
+        res.status(200).render("register", payload)
+      } else {
+        // inserting a new user
+        let insertSql = `INSERT INTO user (username, email, password) VALUES (?,?,?)`
+        let insertValues = [username, email, password]
+
+        userPool.query(insertSql, insertValues, (error, results) => {
+          if (error) throw error
+          payload.successMessage = "註冊成功"
+          res.status(200).render("register", payload)
+        })
+      }
+    })
   } else {
-    payload.errMessage = "請填寫完整資訊"
+    payload.errorMessage = "請填寫完整資訊"
     res.status(200).render("register", payload)
   }
 })

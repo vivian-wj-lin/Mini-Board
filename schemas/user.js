@@ -51,4 +51,5 @@ pool.getConnection((err, connection) => {
 
   connection.release()
 })
-// module.exports = connection
+
+module.exports = { userPool: pool }
