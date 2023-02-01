@@ -10,7 +10,7 @@ app.set("views", "./views")
 // app.use(expressLayouts)
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 router.get("/", (req, res, next) => {
   res.status(200).render("register")
@@ -38,8 +38,13 @@ router.post("/", (req, res, next) => {
 
         userPool.query(insertSql, insertValues, (error, results) => {
           if (error) throw error
-          payload.successMessage = "註冊成功"
-          res.status(200).render("register", payload)
+          // payload.successMessage = "註冊成功，請登入"
+          // res.status(200).render("register", payload)
+          req.session.user = {
+            username: insertValues[0],
+            email: insertValues[1],
+          }
+          return res.redirect("/")
         })
       }
     })
