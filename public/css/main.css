@@ -17,8 +17,6 @@ nav {
   flex-direction: column;
   align-items: flex-end;
   height: 100%;
-  align-items: flex-start;
-  margin-left: 50px;
 }
 
 nav a {
@@ -42,5 +40,5 @@ nav a:hover {
 }
 
 .mainSectionContainer {
-  background-color: blue;
+  background-color: skyblue;
 }

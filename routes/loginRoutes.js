@@ -19,7 +19,7 @@ router.get("/", (req, res, next) => {
   res.status(200).render("login")
 })
 
-console.log("before the POST for /login")
+// console.log("before the POST for /login")
 router.post("/", (req, res, next) => {
   // console.log("Request Object:", req)
   // console.log("Response Object:", res)

@@ -24,11 +24,11 @@ app.use(
 
 //Routes
 const loginRoute = require("./routes/loginRoutes")
-console.log("loginRoute is:", loginRoute)
+// console.log("loginRoute is:", loginRoute)
 const registerRoute = require("./routes/registerRoutes")
 
 app.use("/login", loginRoute)
-console.log("/login routes are mounted")
+// console.log("/login routes are mounted")
 app.use("/register", registerRoute)
 
 app.get("/", middleware.requireLogin, (req, res, next) => {
