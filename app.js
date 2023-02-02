@@ -24,22 +24,23 @@ app.use(
 
 //Routes
 const loginRoute = require("./routes/loginRoutes")
-// console.log("loginRoute is:", loginRoute)
 const registerRoute = require("./routes/registerRoutes")
+const logoutRoute = require("./routes/logout")
 
 app.use("/login", loginRoute)
 // console.log("/login routes are mounted")
 app.use("/register", registerRoute)
+app.use("/logout", loginRoute)
 
 app.get("/", middleware.requireLogin, (req, res, next) => {
   let payload = {
     indexTitle: "Home",
     userLoggedIn: req.session.user,
   }
-  console.log("user in session:", req.session.user)
-  console.log("payload:", payload)
-  console.log("req.session:", req.session)
-  console.log("payload.userLoggedIn:", payload.userLoggedIn)
+  // console.log("user in session:", req.session.user)
+  // console.log("payload:", payload)
+  // console.log("req.session:", req.session)
+  // console.log("payload.userLoggedIn:", payload.userLoggedIn)
   // console.log("payload.userLoggedIn.username:", payload.userLoggedIn.username)
   res.status(200).render("index", payload)
 })
