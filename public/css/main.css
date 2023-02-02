@@ -5,6 +5,10 @@
   --spacing: 15px;
 }
 
+.row {
+  display: flex;
+}
+
 a {
   color: inherit;
 }

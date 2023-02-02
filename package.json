@@ -30,6 +30,7 @@
     "express-session": "^1.17.3",
     "mysql": "^2.18.1",
     "mysql2": "^3.1.0",
+    "pug": "^3.0.2",
     "session": "^0.1.0"
   },
   "devDependencies": {

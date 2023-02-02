@@ -6,7 +6,7 @@ const router = express.Router()
 const bodyParser = require("body-parser")
 const { userPool } = require("../schemas/user")
 
-app.set("view engine", "ejs")
+app.set("view engine", "pug")
 app.set("views", "./views")
 
 app.use(bodyParser.json())

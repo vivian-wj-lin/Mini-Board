@@ -6,7 +6,7 @@ const path = require("path")
 const bodyParser = require("body-parser")
 const session = require("express-session")
 
-app.set("view engine", "ejs")
+app.set("view engine", "pug")
 app.set("views", "./views")
 // app.set("layout", "register")
 // app.use(expressLayouts)
@@ -42,7 +42,7 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
   // console.log("req.session:", req.session)
   // console.log("payload.userLoggedIn:", payload.userLoggedIn)
   // console.log("payload.userLoggedIn.username:", payload.userLoggedIn.username)
-  res.status(200).render("index", payload)
+  res.status(200).render("home", payload)
 })
 
 app.listen(3000, function () {
