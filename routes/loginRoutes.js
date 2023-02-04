@@ -53,7 +53,9 @@ router.post("/", (req, res, next) => {
         if (user.password === password) {
           // console.log("User's password matches the input")
           // console.log("Sending response to client")
-          req.session.user = { username: user.username }
+          // req.session.user = { username: user.username }
+          req.session.user = user
+          console.log("user:", user)
           return res.redirect("/")
         } else {
           // console.log("User's password does not match the input")

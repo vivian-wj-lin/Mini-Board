@@ -4,6 +4,18 @@ mixin createPostForm(userLoggedIn)
             img(src=userLoggedIn.profilePic, alt="User's profile picture")
         .textareaContainer
             textarea#postTextarea(placeholder="What's happening?")
+            //- label#upload-label(for='image-input')
+            //-     button#upload-button
+            //-         i.fa.fa-upload#testclass
+            //-         |  上傳圖片
+            //-         input#image-input(type='file' style='display:none;')
+
+
+            //- label(for="input-img")
+            //- i.fa.fa-upload#testclass Select image:
+            //- input(type="file" id="input-img" name="input-img" accept="image/*" style='display:none;' )
+
+
             .buttonsContainer
-                //- button#submitPostButton(disabled="") Post
-                button#submitPostButton Post
+            button#submitPostButton Post
+        //- button#submitPostButton(disabled="") Post

@@ -27,10 +27,15 @@ const loginRoute = require("./routes/loginRoutes")
 const registerRoute = require("./routes/registerRoutes")
 const logoutRoute = require("./routes/logout")
 
+//Api routes
+const postsApiRoute = require("./routes/api/posts")
+
 app.use("/login", loginRoute)
 // console.log("/login routes are mounted")
 app.use("/register", registerRoute)
 app.use("/logout", loginRoute)
+
+app.use("/api/posts", postsApiRoute)
 
 app.get("/", middleware.requireLogin, (req, res, next) => {
   let payload = {

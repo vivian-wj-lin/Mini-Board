@@ -32,24 +32,26 @@ pool.getConnection((err, connection) => {
   }
 
   const createTableQuery = `
-    CREATE TABLE IF NOT EXISTS user (
-      user_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      username VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL,
-      password VARCHAR(255) NOT NULL,
-      profilePic varchar(10000)
-    );
-  `
+    CREATE TABLE IF NOT EXISTS posts (
+      Posts_Id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+      postedBy VARCHAR(500) NOT NULL,
+      content VARCHAR(500),
+      createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      pinned BOOLEAN,
+      imageURL VARCHAR(5000)
+);
 
+  `
   connection.query(createTableQuery, (error, results) => {
     if (error) {
       console.error("Error creating table: " + error.stack)
       return
     }
-    console.log("User table created/runs successfully.")
+    console.log("Post table created/runs successfully.")
   })
 
   connection.release()
 })
 
-module.exports = { userPool: pool }
+module.exports = { postsPool: pool }
