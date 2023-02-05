@@ -37,7 +37,7 @@ pool.getConnection((err, connection) => {
       username VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL,
       password VARCHAR(255) NOT NULL,
-      profilePic varchar(10000)
+      profilePic varchar(10000) DEFAULT"https://msg-board-s3-bucket.s3.ap-northeast-1.amazonaws.com/msgboard/profilePic.jpeg"
     );
   `
 

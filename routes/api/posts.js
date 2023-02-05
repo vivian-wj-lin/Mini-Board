@@ -23,10 +23,16 @@ router.post("/", (req, res, next) => {
     content: req.body.content,
     postedBy: req.session.user,
   }
+  console.log("req.session:", req.session)
   console.log("postData:", postData)
   postsPool.query(
-    `INSERT INTO posts (content, postedBy) VALUES (?, ?)`,
-    [postData.content, postData.postedBy["username"]],
+    `INSERT INTO posts (content, user_Id, username ) VALUES (?, ?, ?)`,
+    [
+      postData.content,
+      postData.postedBy["user_id"],
+      postData.postedBy["username"],
+    ],
+
     function (error, results, fields) {
       if (error) {
         console.log(error)

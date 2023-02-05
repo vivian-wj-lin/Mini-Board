@@ -33,13 +33,15 @@ pool.getConnection((err, connection) => {
 
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS posts (
-      Posts_Id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      postedBy VARCHAR(500) NOT NULL,
+      posts_Id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+      user_Id int NOT NULL,
+      username VARCHAR(500) NOT NULL,
       content VARCHAR(500),
       createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       pinned BOOLEAN,
-      imageURL VARCHAR(5000)
+      imageURL VARCHAR(5000),
+      FOREIGN KEY (user_Id) REFERENCES user(user_id)
 );
 
   `

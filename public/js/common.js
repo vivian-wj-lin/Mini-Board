@@ -23,9 +23,56 @@ $("#submitPostButton").click((event) => {
   }
 
   $.post("/api/posts", data, (postData, status, xhr) => {
-    console.log(postData)
+    // console.log("postData:", postData)
+    let html = createPostHtml(postData)
+    $(".postsContainer").prepend(html)
+    textbox.val("")
+    // button.prop("disabled", true)
   })
 })
+
+function createPostHtml(postData) {
+  // return postData.content
+  let postedBy = postData.postedBy
+  let timestamp = new Date().getTime()
+  let timestampString = new Date(timestamp).toLocaleString()
+  console.log(timestampString.toString())
+
+  return `<div class='post'>
+
+                <div class='mainContentContainer'>
+                    <div class='userImageContainer'>
+                        <img src='${postedBy["profilePic"]}'>
+                    </div>
+                    <div class='postContentContainer'>
+                        <div class='header'>
+                          <a href="profile/${postedBy["username"]}" class="username">${postedBy["username"]}</a>
+                          <span class="date">•${timestampString}</span>
+                        </div>
+                        <div class='postBody'>
+                            <span>${postData.content}</span>
+                        </div>
+                        <div class='postFooter'>
+                        <div class='postButtonContainer'>
+                                <button>
+                                    <i class='far fa-comment'></i>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer'>
+                                <button>
+                                    <i class='fas fa-retweet'></i>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer'>
+                                <button>
+                                    <i class='far fa-heart'></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`
+}
 
 // $("#testclass").click((event) => {
 //   $("#image-input").click()
