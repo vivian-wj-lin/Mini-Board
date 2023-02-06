@@ -31,6 +31,22 @@ $("#submitPostButton").click((event) => {
   })
 })
 
+$(document).on("click", ".likeButton", (event) => {
+  let button = $(event.target)
+  let postId = getPostIdFromElement(button)
+  console.log(postId)
+})
+
+function getPostIdFromElement(element) {
+  let isRoot = element.hasClass("post")
+  let rootElement = isRoot == true ? element : element.closest(".post")
+  let postId = rootElement.data().id
+
+  if (postId === undefined) return alert("Post id undefined")
+
+  return postId
+}
+
 function createPostHtml(postData) {
   // return postData.content
   let postedBy = postData.postedBy
@@ -48,12 +64,12 @@ function createPostHtml(postData) {
     timeString = splitTime[1]
   }
   let formattedDate = dateString.split("/").join("-") + " " + timeString
-  console.log(formattedDate)
+  // console.log(formattedDate)
 
-  console.log("postData in common.js:", postData)
-  console.log("postedBy in common.js:", postedBy)
+  // console.log("postData in common.js:", postData)
+  // console.log("postedBy in common.js:", postedBy)
 
-  return `<div class='post'>
+  return `<div class='post' data-id='${postedBy["posts_Id"]}'>
 
                   <div class='mainContentContainer'>
                       <div class='userImageContainer'>
@@ -83,7 +99,7 @@ function createPostHtml(postData) {
                                   </button>
                               </div>
                               <div class='postButtonContainer'>
-                                  <button>
+                                  <button class='likeButton'>
                                       <i class='far fa-heart'></i>
                                   </button>
                               </div>
