@@ -41,7 +41,8 @@ pool.getConnection((err, connection) => {
       updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       pinned BOOLEAN,
       imageURL VARCHAR(5000),
-      FOREIGN KEY (user_Id) REFERENCES user(user_id)
+      FOREIGN KEY (user_Id) REFERENCES user(user_id),
+      timefromFE VARCHAR(500)
 );
 
   `

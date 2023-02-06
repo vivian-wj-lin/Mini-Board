@@ -34,44 +34,63 @@ $("#submitPostButton").click((event) => {
 function createPostHtml(postData) {
   // return postData.content
   let postedBy = postData.postedBy
+
   let timestamp = new Date().getTime()
-  let timestampString = new Date(timestamp).toLocaleString()
-  console.log(timestampString.toString())
+  let date = new Date(timestamp)
+  let dateString = date.toLocaleDateString()
+  let timeString = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  })
+  let splitTime = timeString.split(" ")
+  if (splitTime.length > 1) {
+    timeString = splitTime[1]
+  }
+  let formattedDate = dateString.split("/").join("-") + " " + timeString
+  console.log(formattedDate)
+
+  console.log("postData in common.js:", postData)
+  console.log("postedBy in common.js:", postedBy)
 
   return `<div class='post'>
 
-                <div class='mainContentContainer'>
-                    <div class='userImageContainer'>
-                        <img src='${postedBy["profilePic"]}'>
-                    </div>
-                    <div class='postContentContainer'>
-                        <div class='header'>
-                          <a href="profile/${postedBy["username"]}" class="username">${postedBy["username"]}</a>
-                          <span class="date">•${timestampString}</span>
-                        </div>
-                        <div class='postBody'>
-                            <span>${postData.content}</span>
-                        </div>
-                        <div class='postFooter'>
-                        <div class='postButtonContainer'>
-                                <button>
-                                    <i class='far fa-comment'></i>
-                                </button>
-                            </div>
-                            <div class='postButtonContainer'>
-                                <button>
-                                    <i class='fas fa-retweet'></i>
-                                </button>
-                            </div>
-                            <div class='postButtonContainer'>
-                                <button>
-                                    <i class='far fa-heart'></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>`
+                  <div class='mainContentContainer'>
+                      <div class='userImageContainer'>
+                          <img src='${postedBy["profilePic"]}'>
+                      </div>
+                      <div class='postContentContainer'>
+                          <div class='header'>
+                            <a href="profile/${
+                              postedBy["username"]
+                            }" class="username">${postedBy["username"]}</a>
+                            <span class="date">•${
+                              postedBy["timefromFE"] || formattedDate
+                            }</span>
+                          </div>
+                          <div class='postBody'>
+                              <span>${postData.content}</span>
+                          </div>
+                          <div class='postFooter'>
+                          <div class='postButtonContainer'>
+                                  <button>
+                                      <i class='far fa-comment'></i>
+                                  </button>
+                              </div>
+                              <div class='postButtonContainer'>
+                                  <button>
+                                      <i class='fas fa-retweet'></i>
+                                  </button>
+                              </div>
+                              <div class='postButtonContainer'>
+                                  <button>
+                                      <i class='far fa-heart'></i>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>`
 }
 
 // $("#testclass").click((event) => {
