@@ -5,6 +5,8 @@ const middleware = require("./middleware")
 const path = require("path")
 const bodyParser = require("body-parser")
 const session = require("express-session")
+const { likesPool } = require("./schemas/likeSchema.js")
+const like = require("./schemas/likeSchema.js")
 
 app.set("view engine", "pug")
 app.set("views", "./views")
@@ -61,13 +63,60 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
 })
 
 app.post("/api/likes", (req, res, next) => {
-  res.status(200).send("api/like worked")
+  // res.status(200).send("api/like worked")
   if (!req.body) {
     return res.status(400).send({
       error: "no content",
     })
   }
   console.log("req.body:", req.body)
+  let userId = req.body.userId
+  console.log("userId in app.js:", userId)
+  let postId = req.body.postId
+  console.log("postId in app.js:", postId)
+  let timestamp = new Date().getTime()
+  let timestampString = new Date(timestamp).toLocaleString()
+  likesPool.query(
+    `INSERT INTO likes (post_id, user_id, like_timestampfromFE ) VALUES ( ?, ?, ?)`,
+    [postId, userId, timestampString],
+
+    function (error, results, fields) {
+      if (error) {
+        console.log(error)
+        res.sendStatus(400)
+      } else {
+        let likesData = {
+          postId: postId,
+          userId: userId,
+          timestamp: timestampString,
+        }
+        return res.status(201).send(likesData)
+      }
+      console.log("likesData:", likesData)
+    }
+  )
+})
+
+app.get("/api/likes", (req, res, next) => {
+  console.log("getting the likes api")
+  likesPool.query(
+    `SELECT * FROM likes;
+`,
+    function async(error, results, fields) {
+      if (error) {
+        console.log(error)
+        res.sendStatus(400)
+      } else {
+        const likesData = results.map((result) => ({
+          postId: result.post_id,
+          userId: result.user_id,
+          timestamp: result.like_timestampfromFE,
+        }))
+        res.status(200).send(likesData)
+        console.log(likesData)
+      }
+    }
+  )
 })
 
 app.listen(3000, function () {

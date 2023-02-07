@@ -14,7 +14,7 @@ const like = require("../../schemas/likeSchema")
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-console.log("0")
+
 // router.get("/api/likes", (req, res, next) => {
 //   console.log("0.5")
 //   likesPool.query(
@@ -73,7 +73,7 @@ console.log("0")
 // })
 
 router.post("/api/likes", (req, res, next) => {
-  res.status(200).send("like.js worked")
+  res.status(200).send("POST like.js worked")
 })
 
 module.exports = router
