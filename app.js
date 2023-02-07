@@ -119,6 +119,21 @@ app.get("/api/likes", (req, res, next) => {
   )
 })
 
+app.delete("/api/likes", (req, res, next) => {
+  const { userId, postId } = req.body
+  likesPool.query(
+    `DELETE FROM likes WHERE user_id = ${userId} AND post_id = ${postId};`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error)
+        res.sendStatus(400)
+      } else {
+        res.status(200).send("Like successfully removed")
+      }
+    }
+  )
+})
+
 app.listen(3000, function () {
   console.log("server is listening on port 3000")
 })

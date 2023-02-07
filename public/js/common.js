@@ -33,6 +33,25 @@ $("#submitPostButton").click((event) => {
   })
 })
 
+// $(document).on("click", ".likeButton", (event) => {
+//   let button = $(event.target)
+//   let postId = getPostIdFromElement(button)
+//   console.log("postId:", postId)
+//   if (postId === undefined) return
+
+//   $.ajax({
+//     url: "/api/likes",
+//     type: "POST",
+//     data: { postId: postId, userId: window.userId },
+//     success: (postData) => {
+//       console.log("likesData:", postData)
+//       // Update the UI with the new like count
+//     },
+//     error: (error) => {
+//       console.error("Error liking post:", error)
+//     },
+//   })
+// })
 $(document).on("click", ".likeButton", (event) => {
   let button = $(event.target)
   let postId = getPostIdFromElement(button)
@@ -41,14 +60,45 @@ $(document).on("click", ".likeButton", (event) => {
 
   $.ajax({
     url: "/api/likes",
-    type: "POST",
+    type: "GET",
     data: { postId: postId, userId: window.userId },
-    success: (postData) => {
-      console.log("likesData:", postData)
-      // Update the UI with the new like count
+    success: (likesData) => {
+      console.log("likesData:", likesData)
+      let likeExists = likesData.some(
+        (like) => like.postId === postId && like.userId === window.userId
+      )
+      if (likeExists) {
+        // User has liked the post, perform DELETE
+        $.ajax({
+          url: "/api/likes",
+          type: "DELETE",
+          data: { postId: postId, userId: window.userId },
+          success: (postData) => {
+            console.log("Post unliked successfully:", postData)
+            // Update the UI with the new like count
+          },
+          error: (error) => {
+            console.error("Error unliking post:", error)
+          },
+        })
+      } else {
+        // User has not liked the post, perform INSERT
+        $.ajax({
+          url: "/api/likes",
+          type: "POST",
+          data: { postId: postId, userId: window.userId },
+          success: (postData) => {
+            console.log("Post liked successfully:", postData)
+            // Update the UI with the new like count
+          },
+          error: (error) => {
+            console.error("Error liking post:", error)
+          },
+        })
+      }
     },
     error: (error) => {
-      console.error("Error liking post:", error)
+      console.error("Error checking if like exists:", error)
     },
   })
 })
