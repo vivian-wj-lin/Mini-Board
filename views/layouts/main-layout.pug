@@ -43,4 +43,13 @@ html(lang="en")
 
         block scripts
 
+        script.
+            console.log("hi, this is script from main-layout.pug")
+            console.log("userId from main-layout:",#{userId})
+            window.userId = !{JSON.stringify(userId)}
+            //- window.userId = JSON.stringify(userId);
+            //- console.log(userId)
+            //- console.log("userId ", window.userId)
         script(src="/js/common.js")
+
+

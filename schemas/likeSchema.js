@@ -36,7 +36,7 @@ pool.getConnection((err, connection) => {
       likes_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
       post_id int NOT NULL,
       user_id int NOT NULL,
-      like_timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+      like_timestampfromFE VARCHAR(500) NOT NULL 
     );
   `
 

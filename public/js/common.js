@@ -1,3 +1,5 @@
+console.log("common.js is running")
+
 $("#postTextarea").keyup((event) => {
   let textbox = $(event.target)
   let value = textbox.val().trim()
@@ -34,7 +36,21 @@ $("#submitPostButton").click((event) => {
 $(document).on("click", ".likeButton", (event) => {
   let button = $(event.target)
   let postId = getPostIdFromElement(button)
-  console.log(postId)
+  console.log("postId:", postId)
+  if (postId === undefined) return
+
+  $.ajax({
+    url: "/api/likes",
+    type: "POST",
+    data: { postId: postId, userId: window.userId },
+    success: (postData) => {
+      console.log("likesData:", postData)
+      // Update the UI with the new like count
+    },
+    error: (error) => {
+      console.error("Error liking post:", error)
+    },
+  })
 })
 
 function getPostIdFromElement(element) {
