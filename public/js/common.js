@@ -33,26 +33,50 @@ $("#submitPostButton").click((event) => {
   })
 })
 
-// $(document).on("click", ".likeButton", (event) => {
-//   let button = $(event.target)
-//   let postId = getPostIdFromElement(button)
-//   console.log("postId:", postId)
-//   if (postId === undefined) return
+// $.ajax({
+//   url: "/api/like-count",
+//   type: "GET",
+//   success: (likeCounts) => {
+//     likeCounts.forEach((likeCount) => {
+//       let postId = likeCount.post_id
+//       let count = likeCount.likeCount
+//       console.log("postId:", postId)
+//       console.log("count:", count)
+//       let selectedElements = $(`[data-id=${postId}] .likeButton span`)
+//       // let selectedElements = $(`[data-id=${postId}] span`)
 
-//   $.ajax({
-//     url: "/api/likes",
-//     type: "POST",
-//     data: { postId: postId, userId: window.userId },
-//     success: (postData) => {
-//       console.log("likesData:", postData)
-//       // Update the UI with the new like count
-//     },
-//     error: (error) => {
-//       console.error("Error liking post:", error)
-//     },
-//   })
+//       console.log("selectedElements:", selectedElements)
+//       selectedElements.text(count)
+//     })
+//     console.log("likeCounts:", likeCounts)
+//   },
+//   error: (error) => {
+//     console.error("Error retrieving like counts:", error)
+//   },
 // })
-$(document).on("click", ".likeButton", (event) => {
+async function getLikeCounts() {
+  try {
+    let response = await $.ajax({
+      url: "/api/like-count",
+      type: "GET",
+    })
+    response.forEach((likeCount) => {
+      let postId = likeCount.post_id
+      let count = likeCount.likeCount
+      console.log("postId:", postId)
+      console.log("count:", count)
+      let selectedElements = $(`[data-id=${postId}] .likeButton span`)
+      console.log("selectedElements:", selectedElements)
+      selectedElements.text(count)
+    })
+    console.log("likeCounts:", response)
+  } catch (error) {
+    console.error("Error retrieving like counts:", error)
+  }
+}
+getLikeCounts()
+
+$(document).on("click", ".likeButton, .likeButton i.fa-heart", (event) => {
   let button = $(event.target)
   let postId = getPostIdFromElement(button)
   console.log("postId:", postId)
@@ -76,6 +100,7 @@ $(document).on("click", ".likeButton", (event) => {
           success: (postData) => {
             console.log("Post unliked successfully:", postData)
             // Update the UI with the new like count
+            getLikeCounts()
           },
           error: (error) => {
             console.error("Error unliking post:", error)
@@ -114,6 +139,7 @@ function getPostIdFromElement(element) {
 }
 
 function createPostHtml(postData) {
+  getLikeCounts()
   // return postData.content
   let postedBy = postData.postedBy
 
@@ -167,6 +193,7 @@ function createPostHtml(postData) {
                               <div class='postButtonContainer'>
                                   <button class='likeButton'>
                                       <i class='far fa-heart'></i>
+                                      <span></span>
                                   </button>
                               </div>
                           </div>

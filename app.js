@@ -134,6 +134,20 @@ app.delete("/api/likes", (req, res, next) => {
   )
 })
 
+app.get("/api/like-count", (req, res) => {
+  let query = `SELECT post_id, COUNT(*) as likeCount FROM likes GROUP BY post_id;`
+
+  likesPool.query(query, (error, result) => {
+    if (error) {
+      console.error("Error retrieving like count:", error)
+      return res.status(500).send({ error: "Error retrieving like count" })
+    }
+
+    res.send(result)
+    console.log("likeCount:", result)
+  })
+})
+
 app.listen(3000, function () {
   console.log("server is listening on port 3000")
 })
