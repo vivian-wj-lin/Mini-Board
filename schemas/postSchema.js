@@ -42,7 +42,8 @@ pool.getConnection((err, connection) => {
       pinned BOOLEAN,
       imageURL VARCHAR(5000),
       FOREIGN KEY (user_Id) REFERENCES user(user_id),
-      timefromFE VARCHAR(500)
+      timefromFE VARCHAR(500),
+      replyTo int
 );
 
   `
