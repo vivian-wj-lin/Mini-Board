@@ -1,10 +1,15 @@
+// const { Outposts } = require("aws-sdk")
+
 console.log("common.js is running")
 
-$("#postTextarea").keyup((event) => {
+$("#postTextarea, #replyTextarea").keyup((event) => {
   let textbox = $(event.target)
   let value = textbox.val().trim()
   // console.log(value)
-  let submitButton = $("#submitPostButton")
+
+  let isModal = textbox.parents(".modal").length == 1
+
+  let submitButton = isModal ? $("#submitReplyButton") : $("#submitPostButton")
 
   if (submitButton.length == 0) return alert("No submit button found")
 
@@ -33,6 +38,16 @@ $("#submitPostButton").click((event) => {
   })
 })
 
+$("#replyModal").on("show.bs.modal", (event) => {
+  var button = $(event.relatedTarget)
+  var postId = getPostIdFromElement(button)
+
+  $.get("/api/posts/" + postId, (results) => {
+    console.log("i am the result:", results)
+    outputPosts(results, $("#originalPostContainer"))
+  })
+})
+
 // $.ajax({
 //   url: "/api/like-count",
 //   type: "GET",
@@ -54,6 +69,7 @@ $("#submitPostButton").click((event) => {
 //     console.error("Error retrieving like counts:", error)
 //   },
 // })
+
 async function getLikeCounts() {
   try {
     let response = await $.ajax({
@@ -63,13 +79,13 @@ async function getLikeCounts() {
     response.forEach((likeCount) => {
       let postId = likeCount.post_id
       let count = likeCount.likeCount
-      console.log("postId:", postId)
-      console.log("count:", count)
+      // console.log("postId:", postId)
+      // console.log("count:", count)
       let selectedElements = $(`[data-id=${postId}] .likeButton span`)
-      console.log("selectedElements:", selectedElements)
+      // console.log("selectedElements:", selectedElements)
       selectedElements.text(count)
     })
-    console.log("likeCounts:", response)
+    // console.log("likeCounts:", response)
   } catch (error) {
     console.error("Error retrieving like counts:", error)
   }
@@ -181,7 +197,7 @@ function createPostHtml(postData) {
                           </div>
                           <div class='postFooter'>
                           <div class='postButtonContainer'>
-                                  <button>
+                                  <button data-toggle='modal' data-target='#replyModal'>
                                       <i class='far fa-comment'></i>
                                   </button>
                               </div>
@@ -200,6 +216,22 @@ function createPostHtml(postData) {
                       </div>
                   </div>
               </div>`
+}
+
+function outputPosts(results, container) {
+  container.html("")
+
+  if (!Array.isArray(results)) {
+    results = [results]
+  }
+
+  results.forEach((result) => {
+    let html = createPostHtml(result)
+    container.append(html)
+  })
+  if (results.length == 0) {
+    container.append("<span class='noResults'>nothing to show</span>")
+  }
 }
 
 // $("#testclass").click((event) => {

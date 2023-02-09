@@ -12,45 +12,56 @@ const Post = require("../../schemas/PostSchema")
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-router.get("/", (req, res, next) => {
-  postsPool.query(
-    `SELECT *, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS formatted_createdAt FROM posts INNER JOIN user ON posts.user_Id=user.user_id;
-`,
-    function async(error, results, fields) {
-      if (error) {
-        console.log(error)
-        res.sendStatus(400)
-      } else {
-        const postData = results.map((result) => ({
-          content: result.content,
-          postedBy: {
-            posts_Id: result.posts_Id,
-            user_Id: result.user_Id,
-            username: result.username,
-            content: result.content,
-            createdAt: result.createdAt,
-            updatedAt: result.updatedAt,
-            pinned: result.pinned,
-            imageURL: result.imageURL,
-            user_id: result.user_id,
-            email: result.email,
-            password: result.password,
-            profilePic: result.profilePic,
-            formatted_createdAt: result.formatted_createdAt,
-            timefromFE: result.timefromFE,
-          },
-        }))
-        postData.sort(function (a, b) {
-          // console.log(b.postedBy.posts_Id)
-          // console.log(a.postedBy.posts_Id)
-          return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
-        })
+router.get("/", async (req, res, next) => {
+  //   postsPool.query(
+  //     `SELECT *, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS formatted_createdAt FROM posts INNER JOIN user ON posts.user_Id=user.user_id;
+  // `,
+  //     function async(error, results, fields) {
+  //       if (error) {
+  //         console.log(error)
+  //         res.sendStatus(400)
+  //       } else {
+  //         const postData = results.map((result) => ({
+  //           content: result.content,
+  //           postedBy: {
+  //             posts_Id: result.posts_Id,
+  //             user_Id: result.user_Id,
+  //             username: result.username,
+  //             content: result.content,
+  //             createdAt: result.createdAt,
+  //             updatedAt: result.updatedAt,
+  //             pinned: result.pinned,
+  //             imageURL: result.imageURL,
+  //             user_id: result.user_id,
+  //             email: result.email,
+  //             password: result.password,
+  //             profilePic: result.profilePic,
+  //             formatted_createdAt: result.formatted_createdAt,
+  //             timefromFE: result.timefromFE,
+  //           },
+  //         }))
+  //         postData.sort(function (a, b) {
+  //           return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
+  //         })
+  //         // console.log(postData.postedBy["formatted_createdAt"])
+  //         res.status(200).send(postData)
+  //       }
+  //     }
+  //   )
+  let results = await getPosts({})
+  res.status(200).send(results)
+})
 
-        // console.log(postData.postedBy["formatted_createdAt"])
-        res.status(200).send(postData)
-      }
-    }
-  )
+router.get("/:id", async (req, res, next) => {
+  // return res.status(200).send("This is awesome")
+  let postId = req.params.id
+  // console.log(postId) //correct id of the selected post
+  let results = await getPosts({})
+  let filteredResults = results.filter(
+    (result) => result.postedBy.posts_Id == postId
+  )[0]
+  console.log(filteredResults.content)
+  res.status(200).send(filteredResults)
 })
 
 router.post("/", (req, res, next) => {
@@ -88,5 +99,44 @@ router.post("/", (req, res, next) => {
 
   // res.status(200).send("it worked")
 })
+
+async function getPosts() {
+  return new Promise((resolve, reject) => {
+    postsPool.query(
+      `SELECT *, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS formatted_createdAt FROM posts INNER JOIN user ON posts.user_Id=user.user_id;`,
+      function (error, results, fields) {
+        if (error) {
+          console.log(error)
+          reject(error)
+        } else {
+          const postData = results.map((result) => ({
+            content: result.content,
+            postedBy: {
+              posts_Id: result.posts_Id,
+              user_Id: result.user_Id,
+              username: result.username,
+              content: result.content,
+              createdAt: result.createdAt,
+              updatedAt: result.updatedAt,
+              pinned: result.pinned,
+              imageURL: result.imageURL,
+              user_id: result.user_id,
+              email: result.email,
+              password: result.password,
+              profilePic: result.profilePic,
+              formatted_createdAt: result.formatted_createdAt,
+              timefromFE: result.timefromFE,
+            },
+          }))
+          postData.sort(function (a, b) {
+            return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
+          })
+
+          resolve(postData)
+        }
+      }
+    )
+  })
+}
 
 module.exports = router

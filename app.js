@@ -144,7 +144,7 @@ app.get("/api/like-count", (req, res) => {
     }
 
     res.send(result)
-    console.log("likeCount:", result)
+    // console.log("likeCount:", result)
   })
 })
 
