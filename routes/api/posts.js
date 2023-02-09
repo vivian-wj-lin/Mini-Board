@@ -85,12 +85,13 @@ router.post("/", (req, res, next) => {
   console.log("req.session:", req.session)
   console.log("postData:", postData)
   postsPool.query(
-    `INSERT INTO posts (content, user_Id, username, timefromFE ) VALUES (?, ?, ?, ?)`,
+    `INSERT INTO posts (content, user_Id, username, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?)`,
     [
       postData.content,
       postData.postedBy["user_id"],
       postData.postedBy["username"],
       timestampString,
+      postData.replyTo,
     ],
 
     function (error, results, fields) {
