@@ -65,6 +65,12 @@ router.get("/:id", async (req, res, next) => {
 })
 
 router.post("/", (req, res, next) => {
+  if (req.body.replyTo) {
+    console.log("this is postDta.replyTo:", req.body.replyTo) //original post ID
+    // postData.replyTo = req.body.replyTo
+    return res.sendStatus(400)
+  }
+
   if (!req.body.content) {
     // res.status(200).send("it worked.")
     console.log("Content param not sent with request")
