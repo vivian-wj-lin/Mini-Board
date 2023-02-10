@@ -158,7 +158,7 @@ function getPostIdFromElement(element) {
   return postId
 }
 
-function createPostHtml(postData) {
+function createPostHtml(postData, largeFont = false) {
   getLikeCounts()
   // return postData.content
   let postedBy = postData.postedBy
@@ -180,6 +180,7 @@ function createPostHtml(postData) {
 
   // console.log("postData in common.js:", postData)
   // console.log("postedBy in common.js:", postedBy)
+  var largeFontClass = largeFont ? "largeFont" : ""
 
   let replyFlag = ""
   if (postData.replyTo) {
@@ -192,7 +193,7 @@ function createPostHtml(postData) {
                     </div>`
   }
 
-  return `<div class='post' data-id='${postedBy["posts_Id"]}'>
+  return `<div class='post ${largeFontClass}' data-id='${postedBy["posts_Id"]}'>
 
                   <div class='mainContentContainer'>
                       <div class='userImageContainer'>
@@ -308,7 +309,7 @@ function outputPostswithReplies(results, container) {
   console.log("filteredArray:", filteredArray)
 
   //the main post
-  let mainPostHtml = createPostHtml(results.filteredpostData)
+  let mainPostHtml = createPostHtml(results.filteredpostData, true)
   container.append(mainPostHtml)
 
   //replies
