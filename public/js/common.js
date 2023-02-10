@@ -37,11 +37,15 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
   }
 
   $.post("/api/posts", data, (postData, status, xhr) => {
-    // console.log("postData:", postData)
-    let html = createPostHtml(postData)
-    $(".postsContainer").prepend(html)
-    textbox.val("")
-    // button.prop("disabled", true)
+    if (postData.replyTo) {
+      // location.reload()
+    } else {
+      // console.log("postData:", postData)
+      let html = createPostHtml(postData)
+      $(".postsContainer").prepend(html)
+      textbox.val("")
+      // button.prop("disabled", true)
+    }
   })
 })
 
@@ -190,6 +194,17 @@ function createPostHtml(postData) {
   // console.log("postData in common.js:", postData)
   // console.log("postedBy in common.js:", postedBy)
 
+  let replyFlag = ""
+  if (postData.replyTo) {
+    // console.log("postData:", postData)
+    // console.log("this is postData.replyTo:", postData.replyTo)
+
+    let replyToUsername = postData.postedBy.username
+    replyFlag = `<div class='replyFlag'>
+                        Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>
+                    </div>`
+  }
+
   return `<div class='post' data-id='${postedBy["posts_Id"]}'>
 
                   <div class='mainContentContainer'>
@@ -205,6 +220,7 @@ function createPostHtml(postData) {
                               postedBy["timefromFE"] || formattedDate
                             }</span>
                           </div>
+                          ${replyFlag}
                           <div class='postBody'>
                               <span>${postData.content}</span>
                           </div>

@@ -76,14 +76,15 @@ router.post("/", (req, res, next) => {
     content: req.body.content,
     postedBy: req.session.user,
   }
-
+  // console.log("req.body:", req.body)
   if (req.body.replyTo) {
+    // console.log("req.body:", req.body)
     // console.log("this is postData.replyTo:", req.body.replyTo) //original post ID
     postData.replyTo = req.body.replyTo
   }
 
-  console.log("req.session:", req.session)
-  console.log("postData:", postData)
+  console.log("req.session in post.js:", req.session)
+  console.log("postData in post.js:", postData)
   postsPool.query(
     `INSERT INTO posts (content, user_Id, username, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?)`,
     [
@@ -112,6 +113,7 @@ async function getPosts() {
     postsPool.query(
       `SELECT *, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS formatted_createdAt FROM posts INNER JOIN user ON posts.user_Id=user.user_id;`,
       function (error, results, fields) {
+        // console.log("results in post.js:", results)
         if (error) {
           console.log(error)
           reject(error)
@@ -134,6 +136,7 @@ async function getPosts() {
               formatted_createdAt: result.formatted_createdAt,
               timefromFE: result.timefromFE,
             },
+            replyTo: result.replyTo,
           }))
           postData.sort(function (a, b) {
             return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
