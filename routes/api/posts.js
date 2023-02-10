@@ -62,6 +62,7 @@ router.get("/:id", async (req, res, next) => {
   )[0]
 
   let results = {
+    postData: postData,
     filteredpostData: filteredpostData,
   }
 
@@ -72,8 +73,8 @@ router.get("/:id", async (req, res, next) => {
   let replies = await getPosts({})
   results.replies = replies.filter((reply) => reply.replyTo == postId)
 
-  console.log("filteredpostData:", filteredpostData)
-  console.log("results:", results)
+  console.log("filteredpostData in posts js:", filteredpostData)
+  console.log("results in posts.js:", results)
 
   res.status(200).send(results)
 })

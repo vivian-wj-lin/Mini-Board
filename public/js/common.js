@@ -65,28 +65,6 @@ $("#replyModal").on("hidden.bs.modal", () =>
   $("#originalPostContainer").html("")
 )
 
-// $.ajax({
-//   url: "/api/like-count",
-//   type: "GET",
-//   success: (likeCounts) => {
-//     likeCounts.forEach((likeCount) => {
-//       let postId = likeCount.post_id
-//       let count = likeCount.likeCount
-//       console.log("postId:", postId)
-//       console.log("count:", count)
-//       let selectedElements = $(`[data-id=${postId}] .likeButton span`)
-//       // let selectedElements = $(`[data-id=${postId}] span`)
-
-//       console.log("selectedElements:", selectedElements)
-//       selectedElements.text(count)
-//     })
-//     console.log("likeCounts:", likeCounts)
-//   },
-//   error: (error) => {
-//     console.error("Error retrieving like counts:", error)
-//   },
-// })
-
 async function getLikeCounts() {
   try {
     let response = await $.ajax({
@@ -285,14 +263,49 @@ function outputPosts(results, container) {
 function outputPostswithReplies(results, container) {
   container.html("")
 
-  console.log("results.replyTo:", results.replyTo)
+  // console.log("postData:", postData)
+  // console.log("results.replyTo:", results.replyTo)
+  // console.log("results:", results)
+  // console.log("results.replies.replyTo:", results.replies.replyTo)
+
+  let replyPostIds = results.replies.map(function (reply) {
+    return reply.postedBy.posts_Id
+  })
+
   console.log(results)
-  //replies of the replies
-  // if (results.replyTo !== undefined) {
-  //   let html = createPostHtml(results.replyTo)
-  //   console.log(html)
-  //   container.append(html)
-  // }
+  console.log(replyPostIds)
+
+  let replyPost = results.replies.map(function (reply) {
+    return reply
+  })
+
+  // console.log("replyPost:", replyPost)
+  // console.log("results.filteredpostData:", results.filteredpostData)
+  // console.log("results.replies:", results.replies)
+
+  //preparation before getting replies of the replies
+  let AllpostsIdsfromPostData = results.postData.map(
+    (post) => post.postedBy.posts_Id
+  )
+  // console.log(AllpostsIdsfromPostData)
+
+  let AllpostsfromPostData = results.postData.map((post) => post)
+  // console.log("AllpostsfromPostData:", AllpostsfromPostData)
+
+  let replyToValues = AllpostsfromPostData.map((post) => post.replyTo)
+  // console.log("replyToValues:", replyToValues)
+
+  //find overlapped values
+  let overlappingValues = replyPostIds.filter((value) =>
+    replyToValues.includes(value)
+  )
+
+  // console.log("overlappingValues:", overlappingValues[0])
+  let filteredArray = AllpostsfromPostData.filter(function (post) {
+    return post.replyTo === overlappingValues[0]
+  })
+
+  console.log("filteredArray:", filteredArray)
 
   //the main post
   let mainPostHtml = createPostHtml(results.filteredpostData)
@@ -303,4 +316,12 @@ function outputPostswithReplies(results, container) {
     let html = createPostHtml(result)
     container.append(html)
   })
+
+  //replies of the replies
+  if (filteredArray) {
+    filteredArray.forEach((result) => {
+      let html = createPostHtml(result)
+      container.append(html)
+    })
+  }
 }

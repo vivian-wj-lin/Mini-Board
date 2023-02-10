@@ -38,7 +38,7 @@ app.use("/login", loginRoute)
 // console.log("/login routes are mounted")
 app.use("/register", registerRoute)
 app.use("/logout", loginRoute)
-app.use("/posts", postRoute)
+app.use("/posts", middleware.requireLogin, postRoute)
 
 app.use("/api/posts", postsApiRoute)
 app.use("/api/likes", likesApiRoute)
