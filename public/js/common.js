@@ -57,7 +57,7 @@ $("#replyModal").on("show.bs.modal", (event) => {
 
   $.get("/api/posts/" + postId, (results) => {
     console.log("i am the result:", results)
-    outputPosts(results, $("#originalPostContainer"))
+    outputPosts(results.filteredpostData, $("#originalPostContainer"))
   })
 })
 
@@ -281,3 +281,26 @@ function outputPosts(results, container) {
 //   $("#input-img").click()
 //   console.log($("#input-img").value)
 // })
+
+function outputPostswithReplies(results, container) {
+  container.html("")
+
+  console.log("results.replyTo:", results.replyTo)
+  console.log(results)
+  //replies of the replies
+  // if (results.replyTo !== undefined) {
+  //   let html = createPostHtml(results.replyTo)
+  //   console.log(html)
+  //   container.append(html)
+  // }
+
+  //the main post
+  let mainPostHtml = createPostHtml(results.filteredpostData)
+  container.append(mainPostHtml)
+
+  //replies
+  results.replies.forEach((result) => {
+    let html = createPostHtml(result)
+    container.append(html)
+  })
+}

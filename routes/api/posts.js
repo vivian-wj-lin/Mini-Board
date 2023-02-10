@@ -56,12 +56,26 @@ router.get("/:id", async (req, res, next) => {
   // return res.status(200).send("This is awesome")
   let postId = req.params.id
   // console.log(postId) //correct id of the selected post
-  let results = await getPosts({})
-  let filteredResults = results.filter(
+  let postData = await getPosts({})
+  let filteredpostData = postData.filter(
     (result) => result.postedBy.posts_Id == postId
   )[0]
-  console.log(filteredResults.content)
-  res.status(200).send(filteredResults)
+
+  let results = {
+    filteredpostData: filteredpostData,
+  }
+
+  if (filteredpostData.replyTo !== null) {
+    results.replyTo = filteredpostData.replyTo
+  }
+
+  let replies = await getPosts({})
+  results.replies = replies.filter((reply) => reply.replyTo == postId)
+
+  console.log("filteredpostData:", filteredpostData)
+  console.log("results:", results)
+
+  res.status(200).send(results)
 })
 
 router.post("/", (req, res, next) => {
