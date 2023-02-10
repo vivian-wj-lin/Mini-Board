@@ -38,7 +38,7 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
 
   $.post("/api/posts", data, (postData, status, xhr) => {
     if (postData.replyTo) {
-      // location.reload()
+      location.reload()
     } else {
       // console.log("postData:", postData)
       let html = createPostHtml(postData)
@@ -159,6 +159,15 @@ $(document).on("click", ".likeButton, .likeButton i.fa-heart", (event) => {
       console.error("Error checking if like exists:", error)
     },
   })
+})
+
+$(document).on("click", ".post", (event) => {
+  let element = $(event.target)
+  let postId = getPostIdFromElement(element)
+
+  if (postId !== undefined && !element.is("button")) {
+    window.location.href = "/posts/" + postId
+  }
 })
 
 function getPostIdFromElement(element) {
