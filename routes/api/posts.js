@@ -7,7 +7,7 @@ const bodyParser = require("body-parser")
 const { userPool } = require("../../schemas/user")
 const { postsPool } = require("../../schemas/postSchema")
 const User = require("../../schemas/user")
-const Post = require("../../schemas/PostSchema")
+// const Post = require("../../schemas/PostSchema")
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
