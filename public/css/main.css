@@ -225,3 +225,19 @@ button span {
 .post.largeFont .postFooter {
   font-size: 23px;
 }
+
+.postContentContainer .header {
+  display: flex;
+}
+
+.postContentContainer .header .date {
+  flex: 1;
+}
+
+.modal-header {
+  display: flex;
+}
+
+.modal-header .modal-title {
+  flex: 1;
+}

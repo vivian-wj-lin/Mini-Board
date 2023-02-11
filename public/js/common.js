@@ -87,7 +87,8 @@ async function getLikeCounts() {
 }
 getLikeCounts()
 
-$(document).on("click", ".likeButton, .likeButton i.fa-heart", (event) => {
+// $(document).on("click", ".likeButton, .likeButton i.fa-heart", (event) => {
+$(document).on("click", ".likeButton", (event) => {
   let button = $(event.target)
   let postId = getPostIdFromElement(button)
   console.log("postId:", postId)
@@ -192,6 +193,11 @@ function createPostHtml(postData, largeFont = false) {
                         Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>
                     </div>`
   }
+  // console.log("postData in common.js:", postData)
+  var buttons = ""
+  if (postData.postedBy.user_id == window.userId) {
+    buttons = `<button data-id="${postedBy["posts_Id"]}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
+  }
 
   return `<div class='post ${largeFontClass}' data-id='${postedBy["posts_Id"]}'>
 
@@ -207,6 +213,7 @@ function createPostHtml(postData, largeFont = false) {
                             <span class="date">•${
                               postedBy["timefromFE"] || formattedDate
                             }</span>
+                            ${buttons}
                           </div>
                           ${replyFlag}
                           <div class='postBody'>
