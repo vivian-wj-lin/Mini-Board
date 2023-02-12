@@ -31,7 +31,7 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
   }
 
   if (isModal) {
-    var id = button.data().id
+    let id = button.data().id
     if (id == null) return alert("Button id is null")
     data.replyTo = id
   }
@@ -50,10 +50,10 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
 })
 
 $("#replyModal").on("show.bs.modal", (event) => {
-  var button = $(event.relatedTarget)
-  var postId = getPostIdFromElement(button)
+  let button = $(event.relatedTarget)
+  let postId = getPostIdFromElement(button)
   $("#submitReplyButton").data("id", postId)
-  console.log("this is the original postid:", $("#submitReplyButton").data())
+  console.log("this is the original postid:", $("#submitReplyButton").data().id)
 
   $.get("/api/posts/" + postId, (results) => {
     console.log("i am the result:", results)
@@ -64,6 +64,31 @@ $("#replyModal").on("show.bs.modal", (event) => {
 $("#replyModal").on("hidden.bs.modal", () =>
   $("#originalPostContainer").html("")
 )
+
+$("#deletePostModal").on("show.bs.modal", (event) => {
+  let button = $(event.relatedTarget)
+  let postId = getPostIdFromElement(button)
+  $("#deletePostButton").data("id", postId)
+  // console.log(
+  //   "id of the post u want to delete:",
+  //   $("#deletePostButton").data().id
+  // )
+})
+
+$("#deletePostButton").click((event) => {
+  let postId = $(event.target).data("id")
+
+  $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "DELETE",
+    success: () => {
+      location.reload()
+    },
+    error: (error) => {
+      console.error("Error deleting post:", error)
+    },
+  })
+})
 
 async function getLikeCounts() {
   try {
@@ -181,7 +206,7 @@ function createPostHtml(postData, largeFont = false) {
 
   // console.log("postData in common.js:", postData)
   // console.log("postedBy in common.js:", postedBy)
-  var largeFontClass = largeFont ? "largeFont" : ""
+  let largeFontClass = largeFont ? "largeFont" : ""
 
   let replyFlag = ""
   if (postData.replyTo) {
@@ -194,7 +219,7 @@ function createPostHtml(postData, largeFont = false) {
                     </div>`
   }
   // console.log("postData in common.js:", postData)
-  var buttons = ""
+  let buttons = ""
   if (postData.postedBy.user_id == window.userId) {
     buttons = `<button data-id="${postedBy["posts_Id"]}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
   }

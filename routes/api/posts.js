@@ -123,6 +123,31 @@ router.post("/", (req, res, next) => {
   // res.status(200).send("it worked")
 })
 
+router.delete("/:id", (req, res, next) => {
+  console.log(req.params.id)
+  const deletePostQuery = `DELETE FROM posts WHERE posts_Id = ?;`
+  const deleteLikeQuery = `DELETE FROM likes WHERE post_id = ?;`
+  const params = req.params.id
+
+  postsPool.query(deletePostQuery, [params], (error, results, fields) => {
+    if (error) {
+      console.error("Error deleting post:", error)
+      res.status(400).send("Bad Request")
+      return
+    }
+    console.log("Post deleted successfully")
+    postsPool.query(deleteLikeQuery, [params], (error, results, fields) => {
+      if (error) {
+        console.error("Error deleting likes:", error)
+        res.status(400).send("Bad Request")
+        return
+      }
+      console.log("Likes deleted successfully")
+    })
+    res.status(202).send("Accepted")
+  })
+})
+
 async function getPosts() {
   return new Promise((resolve, reject) => {
     postsPool.query(
