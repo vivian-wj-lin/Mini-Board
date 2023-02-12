@@ -210,9 +210,9 @@ function createPostHtml(postData, largeFont = false) {
 
   let replyFlag = ""
   if (postData.replyTo) {
-    // console.log("postData:", postData)
     // console.log("this is postData.replyTo:", postData.replyTo)
-
+    // console.log("filteredpostData:", filteredpostData)
+    // console.log("postData:", postData)
     let replyToUsername = postData.postedBy.username
     replyFlag = `<div class='replyFlag'>
                         Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>

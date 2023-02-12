@@ -1,6 +1,10 @@
 :root {
   --blue: #1fa2f1;
   --blueLight: #9bd1f9;
+  --green: #90a93a;
+  --greenLight: #b4ca65;
+  --blueGreen: #397884;
+  --pink: #dabcb4;
   --buttonHoverBg: #d4edff;
   --lightGrey: rgb(230, 236, 240);
   --spacing: 15px;
@@ -51,12 +55,12 @@ nav a {
 }
 
 nav a.blue {
-  color: var(--blue);
+  color: var(--blueGreen);
 }
 
 nav a:hover {
   background-color: var(--buttonHoverBg);
-  color: var(--blue);
+  color: var(--blueGreen);
   border-radius: 50%;
 }
 
@@ -133,7 +137,7 @@ button span {
 }
 
 #submitPostButton {
-  background-color: var(--blue);
+  background-color: var(--pink);
   color: white;
   border: none;
   border-radius: 40px;
@@ -141,7 +145,7 @@ button span {
 }
 
 #submitPostButton:disabled {
-  background-color: var(--blueLight);
+  background-color: var(--pink);
   opacity: 0.5;
 }
 
@@ -209,7 +213,7 @@ button span {
 
 .postButtonContainer button:hover {
   background-color: #d4edff;
-  color: var(--blue);
+  color: var(--blueGreen);
   border-radius: 50%;
 }
 
@@ -218,7 +222,7 @@ button span {
 }
 
 .replyFlag a {
-  color: var(--blue);
+  color: var(--blueGreen);
 }
 
 .post.largeFont .postBody,
@@ -240,4 +244,48 @@ button span {
 
 .modal-header .modal-title {
   flex: 1;
+}
+
+.errorMessage {
+  padding: var(--spacing);
+}
+
+.coverPhotoContainer {
+  height: 180px;
+  background-color: var(--blueGreen);
+  position: relative;
+}
+
+.profileHeaderContainer .userImageContainer {
+  width: 132px;
+  height: 132px;
+  margin-left: var(--spacing);
+  position: absolute;
+  bottom: -66px;
+}
+
+.profileHeaderContainer .userImageContainer img {
+  border: 4px solid #fff;
+}
+
+.profileHeaderContainer .profileButtonsContainer {
+  text-align: right;
+  padding: var(--spacing);
+  min-height: 66px;
+}
+
+.profileButton,
+.followButton {
+  border: 1px solid var(--blueGreen);
+  color: var(--blueGreen);
+  font-weight: bold;
+  padding: 5px 15px;
+  border-radius: 60px;
+  display: inline-block;
+  margin-left: var(--spacing);
+}
+
+.profileButton:hover,
+.followButton:hover {
+  background-color: var(--blueBackground);
 }

@@ -44,7 +44,10 @@ router.post("/", (req, res, next) => {
             username: insertValues[0],
             email: insertValues[1],
           }
-          return res.redirect("/")
+          if (typeof window !== "undefined") {
+            alert("註冊成功，請登入")
+          }
+          return res.redirect("/login")
         })
       }
     })

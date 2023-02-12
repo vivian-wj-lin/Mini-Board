@@ -3,11 +3,21 @@ extends layouts/main-layout.pug
 block content
     if !profileUser
         span.errorMessage 查無使用者
-    else
-        span #{profileUser}
+    else  
+        .profileHeaderContainer
+            .coverPhotoContainer
+
+                .userImageContainer
+                    img(src=profileUser.profilePic, alt="User profile image")
+            .profileButtonsContainer
+                if profileUser.user_id != userLoggedIn.user_id
+                    a.profileButton(href=`/messages/${profileUser.user_id}`)
+                        i.fas.fa-envelope
+                    +createFollowButton(profileUser, false)
+
         .postsContainer
 
-        +createPostModals(profileUser)
+        +createPostModals(userLoggedIn)
 
 block scripts
     script(src="/js/profile.js")
