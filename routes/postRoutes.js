@@ -2,7 +2,6 @@ console.log("loginRoutes.js is running")
 
 const express = require("express")
 const app = express()
-const expressLayouts = require("express-ejs-layouts")
 const router = express.Router()
 const bodyParser = require("body-parser")
 const { userPool } = require("../schemas/user")
