@@ -1,0 +1,13 @@
+extends layouts/main-layout.pug
+
+block content
+    if !profileUser
+        span.errorMessage 查無使用者
+    else
+        span #{profileUser}
+        .postsContainer
+
+        +createPostModals(profileUser)
+
+block scripts
+    script(src="/js/profile.js")
