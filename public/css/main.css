@@ -149,6 +149,15 @@ button span {
   opacity: 0.5;
 }
 
+#uploadImgClass {
+  margin-left: 15px;
+  background-color: var(--pink);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 9px 16px;
+}
+
 /* #submitPostButton {
   background-color: var(--blue);
 }

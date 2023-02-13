@@ -1,6 +1,44 @@
 // const { Outposts } = require("aws-sdk")
 
 console.log("common.js is running")
+const fileReader = new FileReader()
+const fileInput = document.querySelector('input[type="file"]')
+
+const submitBtn = document.querySelector("#submitPostButton")
+submitBtn.addEventListener("click", (e) => {
+  e.preventDefault()
+  console.log(fileInput)
+  console.log(fileReader.readAsDataURL(fileInput.files))
+  fileReader.readAsDataURL(fileInput.files[0])
+  fileReader.onload = () => {
+    let imagedata = fileReader.result
+    let data = {
+      imagedata: imagedata, //base64
+      textinput: textInput.value,
+    }
+    console.log(data)
+    // send data to backend
+    console.log(imagedata) //base64
+    fetch("/upload", {
+      method: "post",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+    })
+      // .then((res) => res.json())
+      .then((res) => {
+        if (res.ok) {
+          createContents(textInput.value, imagedata)
+        }
+        return res.json()
+      })
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((error) => console.error("Error:", error))
+  }
+})
 
 $("#postTextarea, #replyTextarea").keyup((event) => {
   let textbox = $(event.target)

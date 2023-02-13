@@ -11,14 +11,20 @@ mixin createPostForm(userLoggedIn)
             //-         input#image-input(type='file' style='display:none;')
 
 
-            //- label(for="input-img")
-            //- i.fa.fa-upload#testclass Select image:
-            //- input(type="file" id="input-img" name="input-img" accept="image/*" style='display:none;' )
-
-
             .buttonsContainer
             button#submitPostButton Post
-        //- button#submitPostButton(disabled="") Post
+            //- button#submitPostButton(disabled="") Post
+
+            //- label.posting-area(for='upload')
+            //-     .posting-area-div
+            //-         img(src='/images/upload_icon.png' alt='')
+            //-         label(for='upload') upload images
+            //-         input#upload.post-image(type='file')
+
+            label(for="input-img")
+                i.fa.fa-upload#uploadImgClass
+                input(type="file" id="input-img" name="input-img" accept="image/*" style='display:none;' )
+                //- input(type='submit')
 
 mixin createReplyModal(userLoggedIn)
     #replyModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='replyModalLabel' aria-hidden='true')
