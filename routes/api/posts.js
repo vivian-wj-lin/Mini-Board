@@ -16,41 +16,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 router.get("/", async (req, res, next) => {
-  //   postsPool.query(
-  //     `SELECT *, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS formatted_createdAt FROM posts INNER JOIN user ON posts.user_Id=user.user_id;
-  // `,
-  //     function async(error, results, fields) {
-  //       if (error) {
-  //         console.log(error)
-  //         res.sendStatus(400)
-  //       } else {
-  //         const postData = results.map((result) => ({
-  //           content: result.content,
-  //           postedBy: {
-  //             posts_Id: result.posts_Id,
-  //             user_Id: result.user_Id,
-  //             username: result.username,
-  //             content: result.content,
-  //             createdAt: result.createdAt,
-  //             updatedAt: result.updatedAt,
-  //             pinned: result.pinned,
-  //             imageURL: result.imageURL,
-  //             user_id: result.user_id,
-  //             email: result.email,
-  //             password: result.password,
-  //             profilePic: result.profilePic,
-  //             formatted_createdAt: result.formatted_createdAt,
-  //             timefromFE: result.timefromFE,
-  //           },
-  //         }))
-  //         postData.sort(function (a, b) {
-  //           return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
-  //         })
-  //         // console.log(postData.postedBy["formatted_createdAt"])
-  //         res.status(200).send(postData)
-  //       }
-  //     }
-  //   )
   let results = await getPosts({})
   res.status(200).send(results)
 })
@@ -84,7 +49,6 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", (req, res, next) => {
   if (!req.body.content) {
-    // res.status(200).send("it worked.")
     console.log("Content param not sent with request")
     return res.sendStatus(400)
   }
@@ -133,8 +97,6 @@ router.post("/", (req, res, next) => {
         postedBy: req.session.user,
       }
 
-      // RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
-      // console.log(RDSUrl)
       postsPool.getConnection(function (err, connection) {
         let sql =
           "INSERT INTO posts (content, user_Id, username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?);"
@@ -154,13 +116,15 @@ router.post("/", (req, res, next) => {
               reject(error)
             } else {
               console.log("uploaded to RDS")
+              // res.status(201).send(postData)
             }
           }
         )
         connection.release()
       })
       console.log("uploaded to s3")
-      res.status(200).json({ result: "ok" })
+      // res.status(200).json({ result: "ok" })
+      res.status(200).send(postData)
     }
   })
 
@@ -170,31 +134,6 @@ router.post("/", (req, res, next) => {
     // console.log("this is postData.replyTo:", req.body.replyTo) //original post ID
     postData.replyTo = req.body.replyTo
   }
-
-  // console.log("req.session in post.js:", req.session)
-  // console.log("postData in post.js:", postData)
-  // postsPool.query(
-  //   `INSERT INTO posts (content, user_Id, username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?)`,
-  //   [
-  //     postData.content,
-  //     postData.postedBy["user_id"],
-  //     postData.postedBy["username"],
-  //     postData.imagedata,
-  //     timestampString,
-  //     postData.replyTo,
-  //   ],
-
-  //   function (error, results, fields) {
-  //     if (error) {
-  //       console.log(error)
-  //       res.sendStatus(400)
-  //     } else {
-  //       res.status(201).send(postData)
-  //     }
-  //   }
-  // )
-
-  // res.status(200).send("it worked")
 })
 
 router.delete("/:id", (req, res, next) => {
@@ -255,7 +194,7 @@ async function getPosts() {
           postData.sort(function (a, b) {
             return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
           })
-
+          console.log("postData in post.js lin 232:", postData)
           resolve(postData)
         }
       }

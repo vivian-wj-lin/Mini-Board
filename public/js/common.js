@@ -272,7 +272,10 @@ function createPostHtml(postData, largeFont = false) {
                           ${replyFlag}
                           <div class='postBody'>
                               <span>${postData.content}</span>
-                              <img src=${postData.imagedata} alt="image">
+                              <br>
+                              <img src=${
+                                postData.postedBy["imagedata"]
+                              } alt="image" class="postedImg">
                           </div>
                           <div class='postFooter'>
                           <div class='postButtonContainer'>
