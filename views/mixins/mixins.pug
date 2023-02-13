@@ -11,8 +11,7 @@ mixin createPostForm(userLoggedIn)
             //-         input#image-input(type='file' style='display:none;')
 
 
-            .buttonsContainer
-            button#submitPostButton Post
+
             //- button#submitPostButton(disabled="") Post
 
             //- label.posting-area(for='upload')
@@ -21,10 +20,25 @@ mixin createPostForm(userLoggedIn)
             //-         label(for='upload') upload images
             //-         input#upload.post-image(type='file')
 
-            label(for="input-img")
-                i.fa.fa-upload#uploadImgClass
-                input(type="file" id="input-img" name="input-img" accept="image/*" style='display:none;' )
-                //- input(type='submit')
+            //- img#blah(src="" alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px;")
+            - var src = "path/to/image.jpg";
+            if (src)
+                img#blah(src=src alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px;")
+            else
+                img#blah(alt='圖片預覽' style="display:none;")
+
+
+
+
+            .imgBtnContainer
+                label(for="input-img")
+                    i.fa.fa-upload#uploadImgClass
+                    input(type="file" id="input-img" name="input-img" accept="image/*" style='display:none;' onchange="readURL(this);")
+                    //- input(type='submit')
+
+                .buttonsContainer
+                button#submitPostButton Post
+
 
 mixin createReplyModal(userLoggedIn)
     #replyModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='replyModalLabel' aria-hidden='true')

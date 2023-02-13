@@ -4,41 +4,20 @@ console.log("common.js is running")
 const fileReader = new FileReader()
 const fileInput = document.querySelector('input[type="file"]')
 
-const submitBtn = document.querySelector("#submitPostButton")
-submitBtn.addEventListener("click", (e) => {
-  e.preventDefault()
-  console.log(fileInput)
-  console.log(fileReader.readAsDataURL(fileInput.files))
-  fileReader.readAsDataURL(fileInput.files[0])
-  fileReader.onload = () => {
-    let imagedata = fileReader.result
-    let data = {
-      imagedata: imagedata, //base64
-      textinput: textInput.value,
+//hide images that has falsy srcs
+
+//img preview
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader()
+
+    reader.onload = function (e) {
+      $("#blah").attr("src", e.target.result)
     }
-    console.log(data)
-    // send data to backend
-    console.log(imagedata) //base64
-    fetch("/upload", {
-      method: "post",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json; charset=UTF-8",
-      },
-    })
-      // .then((res) => res.json())
-      .then((res) => {
-        if (res.ok) {
-          createContents(textInput.value, imagedata)
-        }
-        return res.json()
-      })
-      .then((data) => {
-        console.log(data)
-      })
-      .catch((error) => console.error("Error:", error))
+
+    reader.readAsDataURL(input.files[0])
   }
-})
+}
 
 $("#postTextarea, #replyTextarea").keyup((event) => {
   let textbox = $(event.target)
@@ -63,28 +42,40 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
   let button = $(event.target)
   let isModal = button.parents(".modal").length == 1
   let textbox = isModal ? $("#replyTextarea") : $("#postTextarea")
-
-  let data = {
-    content: textbox.val(),
-  }
-
-  if (isModal) {
-    let id = button.data().id
-    if (id == null) return alert("Button id is null")
-    data.replyTo = id
-  }
-
-  $.post("/api/posts", data, (postData, status, xhr) => {
-    if (postData.replyTo) {
-      location.reload()
-    } else {
-      // console.log("postData:", postData)
-      let html = createPostHtml(postData)
-      $(".postsContainer").prepend(html)
-      textbox.val("")
-      // button.prop("disabled", true)
+  let fileInput = document.querySelector("#input-img")
+  // console.log(fileInput)
+  // console.log(fileInput.files)
+  // console.log(fileInput.files[0])
+  fileReader.readAsDataURL(fileInput.files[0])
+  fileReader.onload = () => {
+    let imagedata = fileReader.result
+    // console.log(imagedata)//base64
+    let data = {
+      content: textbox.val(),
+      imagedata: imagedata, //base64
     }
-  })
+
+    if (isModal) {
+      let id = button.data().id
+      if (id == null) return alert("Button id is null")
+      data.replyTo = id
+    }
+
+    $.post("/api/posts", data, (postData, status, xhr) => {
+      if (postData.replyTo) {
+        location.reload()
+      } else {
+        console.log("postData in common.js:", postData)
+        let html = createPostHtml(postData)
+        $(".postsContainer").prepend(html)
+        textbox.val("")
+        // const PreviewImg = document.getElementById("blah")
+        // PreviewImg.src = ""
+
+        // button.prop("disabled", true)
+      }
+    })
+  }
 })
 
 $("#replyModal").on("show.bs.modal", (event) => {
@@ -281,6 +272,7 @@ function createPostHtml(postData, largeFont = false) {
                           ${replyFlag}
                           <div class='postBody'>
                               <span>${postData.content}</span>
+                              <img src=${postData.imagedata} alt="image">
                           </div>
                           <div class='postFooter'>
                           <div class='postButtonContainer'>

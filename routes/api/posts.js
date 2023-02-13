@@ -8,6 +8,9 @@ const { userPool } = require("../../schemas/user")
 const { postsPool } = require("../../schemas/postSchema")
 const User = require("../../schemas/user")
 // const Post = require("../../schemas/PostSchema")
+const S3 = require("aws-sdk/clients/s3")
+const AWS = require("aws-sdk")
+const mysql = require("mysql2")
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -85,12 +88,82 @@ router.post("/", (req, res, next) => {
     console.log("Content param not sent with request")
     return res.sendStatus(400)
   }
+
   let timestamp = new Date().getTime()
   let timestampString = new Date(timestamp).toLocaleString()
-  let postData = {
-    content: req.body.content,
-    postedBy: req.session.user,
+  let imgResult = req.body.imagedata
+  let time = new Date().getTime()
+  let imageBuffer = new Buffer.from(
+    imgResult.replace(/^data:image\/\w+;base64,/, ""),
+    "base64"
+  )
+  console.log("imageBuffer:", imageBuffer)
+  const params = {
+    Bucket: "msg-board-s3-bucket",
+    Key: `msgboard/${time}`,
+    Body: imageBuffer,
+    ContentEncoding: "base64",
+    ContentType: "image/png",
   }
+
+  const region = process.env.AWS_region
+  const Bucket = process.env.AWS_BUCKET_NAME
+  const accessKeyId = process.env.AWS_ACCESS_KEY
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+
+  AWS.config.update({
+    Bucket: Bucket,
+    accessKeyId: accessKeyId,
+    secretAccessKey: secretAccessKey,
+    region: region,
+  })
+
+  const s3 = new S3()
+  s3.upload(params, (err, data) => {
+    if (err) {
+      console.log(err)
+      res.status(500).json({ result: "error" })
+    } else {
+      RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
+      console.log(RDSUrl)
+      console.log("req.body in posts.js:", req.body)
+      let postData = {
+        content: req.body.content,
+        imagedata: RDSUrl,
+        postedBy: req.session.user,
+      }
+
+      // RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
+      // console.log(RDSUrl)
+      postsPool.getConnection(function (err, connection) {
+        let sql =
+          "INSERT INTO posts (content, user_Id, username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?);"
+        postsPool.query(
+          sql,
+          [
+            postData.content,
+            postData.postedBy["user_id"],
+            postData.postedBy["username"],
+            RDSUrl,
+            timestampString,
+            postData.replyTo,
+          ],
+          function (error, res, fields) {
+            if (error) {
+              console.log(error)
+              reject(error)
+            } else {
+              console.log("uploaded to RDS")
+            }
+          }
+        )
+        connection.release()
+      })
+      console.log("uploaded to s3")
+      res.status(200).json({ result: "ok" })
+    }
+  })
+
   // console.log("req.body:", req.body)
   if (req.body.replyTo) {
     // console.log("req.body:", req.body)
@@ -98,27 +171,28 @@ router.post("/", (req, res, next) => {
     postData.replyTo = req.body.replyTo
   }
 
-  console.log("req.session in post.js:", req.session)
-  console.log("postData in post.js:", postData)
-  postsPool.query(
-    `INSERT INTO posts (content, user_Id, username, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?)`,
-    [
-      postData.content,
-      postData.postedBy["user_id"],
-      postData.postedBy["username"],
-      timestampString,
-      postData.replyTo,
-    ],
+  // console.log("req.session in post.js:", req.session)
+  // console.log("postData in post.js:", postData)
+  // postsPool.query(
+  //   `INSERT INTO posts (content, user_Id, username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?)`,
+  //   [
+  //     postData.content,
+  //     postData.postedBy["user_id"],
+  //     postData.postedBy["username"],
+  //     postData.imagedata,
+  //     timestampString,
+  //     postData.replyTo,
+  //   ],
 
-    function (error, results, fields) {
-      if (error) {
-        console.log(error)
-        res.sendStatus(400)
-      } else {
-        res.status(201).send(postData)
-      }
-    }
-  )
+  //   function (error, results, fields) {
+  //     if (error) {
+  //       console.log(error)
+  //       res.sendStatus(400)
+  //     } else {
+  //       res.status(201).send(postData)
+  //     }
+  //   }
+  // )
 
   // res.status(200).send("it worked")
 })
@@ -165,15 +239,15 @@ async function getPosts() {
               user_Id: result.user_Id,
               username: result.username,
               content: result.content,
-              createdAt: result.createdAt,
-              updatedAt: result.updatedAt,
+              // createdAt: result.createdAt,
+              // updatedAt: result.updatedAt,
               pinned: result.pinned,
-              imageURL: result.imageURL,
+              imagedata: result.imageURL,
               user_id: result.user_id,
               email: result.email,
               password: result.password,
               profilePic: result.profilePic,
-              formatted_createdAt: result.formatted_createdAt,
+              // formatted_createdAt: result.formatted_createdAt,
               timefromFE: result.timefromFE,
             },
             replyTo: result.replyTo,
