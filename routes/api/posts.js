@@ -55,84 +55,114 @@ router.post("/", (req, res, next) => {
 
   let timestamp = new Date().getTime()
   let timestampString = new Date(timestamp).toLocaleString()
-  let imgResult = req.body.imagedata
-  let time = new Date().getTime()
-  let imageBuffer = new Buffer.from(
-    imgResult.replace(/^data:image\/\w+;base64,/, ""),
-    "base64"
-  )
-  console.log("imageBuffer:", imageBuffer)
-  const params = {
-    Bucket: "msg-board-s3-bucket",
-    Key: `msgboard/${time}`,
-    Body: imageBuffer,
-    ContentEncoding: "base64",
-    ContentType: "image/png",
+  let RDSUrl = null
+  if (req.body.replyTo) {
+    postData.replyTo = req.body.replyTo
   }
 
-  const region = process.env.AWS_region
-  const Bucket = process.env.AWS_BUCKET_NAME
-  const accessKeyId = process.env.AWS_ACCESS_KEY
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
-
-  AWS.config.update({
-    Bucket: Bucket,
-    accessKeyId: accessKeyId,
-    secretAccessKey: secretAccessKey,
-    region: region,
-  })
-
-  const s3 = new S3()
-  s3.upload(params, (err, data) => {
-    if (err) {
-      console.log(err)
-      res.status(500).json({ result: "error" })
-    } else {
-      RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
-      console.log(RDSUrl)
-      console.log("req.body in posts.js:", req.body)
-      let postData = {
-        content: req.body.content,
-        imagedata: RDSUrl,
-        postedBy: req.session.user,
-      }
-
-      postsPool.getConnection(function (err, connection) {
-        let sql =
-          "INSERT INTO posts (content, user_Id, username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?);"
-        postsPool.query(
-          sql,
-          [
-            postData.content,
-            postData.postedBy["user_id"],
-            postData.postedBy["username"],
-            RDSUrl,
-            timestampString,
-            postData.replyTo,
-          ],
-          function (error, res, fields) {
-            if (error) {
-              console.log(error)
-              reject(error)
-            } else {
-              console.log("uploaded to RDS")
-              // res.status(201).send(postData)
-            }
-          }
-        )
-        connection.release()
-      })
-      console.log("uploaded to s3")
-      // res.status(200).json({ result: "ok" })
-      res.status(200).send(postData)
+  if (req.body.imagedata) {
+    let imgResult = req.body.imagedata
+    let time = new Date().getTime()
+    let imageBuffer = new Buffer.from(
+      imgResult.replace(/^data:image\/\w+;base64,/, ""),
+      "base64"
+    )
+    // console.log("imageBuffer:", imageBuffer)
+    const params = {
+      Bucket: "msg-board-s3-bucket",
+      Key: `msgboard/${time}`,
+      Body: imageBuffer,
+      ContentEncoding: "base64",
+      ContentType: "image/png",
     }
-  })
 
-  // console.log("req.body:", req.body)
-  if (req.body.replyTo) {
-    // console.log("req.body:", req.body)
-    // console.log("this is postData.replyTo:", req.body.replyTo) //original post ID
-    postData.replyTo = req.body.replyTo
+    const region = process.env.AWS_region
+    const Bucket = process.env.AWS_BUCKET_NAME
+    const accessKeyId = process.env.AWS_ACCESS_KEY
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+
+    AWS.config.update({
+      Bucket: Bucket,
+      accessKeyId: accessKeyId,
+      secretAccessKey: secretAccessKey,
+      region: region,
+    })
+
+    const s3 = new S3()
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.log(err)
+        res.status(500).json({ result: "error" })
+      } else {
+        RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
+        console.log(RDSUrl)
+        console.log("req.body in posts.js:", req.body)
+        let postData = {
+          content: req.body.content,
+          imagedata: RDSUrl,
+          postedBy: { ...req.session.user, imagedata: RDSUrl },
+        }
+
+        postsPool.getConnection(function (err, connection) {
+          let sql =
+            "INSERT INTO posts (content, user_Id, username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?);"
+          postsPool.query(
+            sql,
+            [
+              postData.content,
+              postData.postedBy["user_id"],
+              postData.postedBy["username"],
+              RDSUrl,
+              timestampString,
+              postData.replyTo,
+            ],
+            function (error, res, fields) {
+              if (error) {
+                console.log(error)
+                reject(error)
+              } else {
+                console.log("uploaded to RDS")
+              }
+            }
+          )
+          connection.release()
+        })
+        console.log("uploaded to s3")
+
+        res.status(200).send(postData)
+      }
+    })
+  } else {
+    let postData = {
+      content: req.body.content,
+      postedBy: req.session.user,
+    }
+
+    postsPool.getConnection(function (err, connection) {
+      let sql =
+        "INSERT INTO posts (content, user_Id, username, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?);"
+      postsPool.query(
+        sql,
+        [
+          postData.content,
+          postData.postedBy["user_id"],
+          postData.postedBy["username"],
+          timestampString,
+          postData.replyTo,
+        ],
+        function (error, res, fields) {
+          if (error) {
+            console.log(error)
+            reject(error)
+          } else {
+            console.log("uploaded to RDS")
+          }
+        }
+      )
+      connection.release()
+    })
+
+    res.status(200).send(postData)
   }
 })
 

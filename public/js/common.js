@@ -43,18 +43,36 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
   let isModal = button.parents(".modal").length == 1
   let textbox = isModal ? $("#replyTextarea") : $("#postTextarea")
   let fileInput = document.querySelector("#input-img")
-  // console.log(fileInput)
-  // console.log(fileInput.files)
-  // console.log(fileInput.files[0])
-  fileReader.readAsDataURL(fileInput.files[0])
-  fileReader.onload = () => {
-    let imagedata = fileReader.result
-    // console.log(imagedata)//base64
-    let data = {
-      content: textbox.val(),
-      imagedata: imagedata, //base64
-    }
 
+  let data = {
+    content: textbox.val(),
+  }
+  //both text and img msg is submitted
+  if (fileInput.files.length > 0) {
+    fileReader.readAsDataURL(fileInput.files[0])
+    fileReader.onload = () => {
+      let imagedata = fileReader.result
+      data.imagedata = imagedata //base64
+
+      if (isModal) {
+        let id = button.data().id
+        if (id == null) return alert("Button id is null")
+        data.replyTo = id
+      }
+
+      $.post("/api/posts", data, (postData, status, xhr) => {
+        if (postData.replyTo) {
+          location.reload()
+        } else {
+          console.log("postData in common.js:", postData)
+          let html = createPostHtml(postData)
+          $(".postsContainer").prepend(html)
+          textbox.val("")
+        }
+      })
+    }
+  } else {
+    //only text msg is submitted
     if (isModal) {
       let id = button.data().id
       if (id == null) return alert("Button id is null")
