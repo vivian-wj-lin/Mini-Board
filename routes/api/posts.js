@@ -56,9 +56,12 @@ router.post("/", (req, res, next) => {
   let timestamp = new Date().getTime()
   let timestampString = new Date(timestamp).toLocaleString()
   let RDSUrl = null
-  if (req.body.replyTo) {
-    postData.replyTo = req.body.replyTo
-  }
+  console.log("req.body.relyTo:", req.body.replyTo)
+  // console.log("postData in post.js line 65:", postData)
+
+  // if (req.body.replyTo) {
+  //   postData.replyTo = req.body.replyTo
+  // }
 
   if (req.body.imagedata) {
     let imgResult = req.body.imagedata
@@ -102,6 +105,9 @@ router.post("/", (req, res, next) => {
           imagedata: RDSUrl,
           postedBy: { ...req.session.user, imagedata: RDSUrl },
         }
+        if (req.body.replyTo) {
+          postData.replyTo = req.body.replyTo
+        }
 
         postsPool.getConnection(function (err, connection) {
           let sql =
@@ -136,6 +142,9 @@ router.post("/", (req, res, next) => {
     let postData = {
       content: req.body.content,
       postedBy: req.session.user,
+    }
+    if (req.body.replyTo) {
+      postData.replyTo = req.body.replyTo
     }
 
     postsPool.getConnection(function (err, connection) {
@@ -224,7 +233,7 @@ async function getPosts() {
           postData.sort(function (a, b) {
             return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
           })
-          console.log("postData in post.js lin 232:", postData)
+          // console.log("postData in post.js lin 233:", postData)
           resolve(postData)
         }
       }
