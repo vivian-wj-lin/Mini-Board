@@ -1,6 +1,6 @@
 // const { Outposts } = require("aws-sdk")
 
-console.log("common.js is running")
+// console.log("common.js is running")
 const fileReader = new FileReader()
 const fileInput = document.querySelector('input[type="file"]')
 
@@ -57,6 +57,7 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
       if (isModal) {
         let id = button.data().id
         if (id == null) return alert("Button id is null")
+        console.log("data:", data)
         data.replyTo = id
       }
 
@@ -259,19 +260,22 @@ function createPostHtml(postData, largeFont = false) {
   if (postData.replyTo) {
     // console.log("this is postData.replyTo:", postData.replyTo)
     // console.log("filteredpostData:", filteredpostData)
-    // console.log("postData:", postData)
+    console.log("postData in common.js line 262:", postData) //all replies
     let replyToUsername = postData.postedBy.username
+
     replyFlag = `<div class='replyFlag'>
                         Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>
                     </div>`
   }
-  // console.log("postData in common.js:", postData)
+  // console.log("postData in common.js line 269:", postData)
   let buttons = ""
   if (postData.postedBy.user_id == window.userId) {
-    buttons = `<button data-id="${postedBy["posts_Id"]}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
+    buttons = `<button data-id="${postedBy["posts_posts_Id"]}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
   }
 
-  return `<div class='post ${largeFontClass}' data-id='${postedBy["posts_Id"]}'>
+  return `<div class='post ${largeFontClass}' data-id='${
+    postedBy["posts_posts_Id"]
+  }'>
 
                   <div class='mainContentContainer'>
                       <div class='userImageContainer'>
@@ -280,8 +284,10 @@ function createPostHtml(postData, largeFont = false) {
                       <div class='postContentContainer'>
                           <div class='header'>
                             <a href="profile/${
-                              postedBy["username"]
-                            }" class="username">${postedBy["username"]}</a>
+                              postedBy["user_username"]
+                            }" class="username">${
+    postedBy["posts_username"]
+  }</a>
                             <span class="date">•${
                               postedBy["timefromFE"] || formattedDate
                             }</span>

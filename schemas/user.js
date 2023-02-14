@@ -34,7 +34,7 @@ pool.getConnection((err, connection) => {
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS user (
       user_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      username VARCHAR(255) UNIQUE NOT NULL,
+      user_username VARCHAR(255) UNIQUE NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
       profilePic varchar(10000) DEFAULT"https://msg-board-s3-bucket.s3.ap-northeast-1.amazonaws.com/msgboard/profilePic.jpeg"
@@ -46,7 +46,7 @@ pool.getConnection((err, connection) => {
       console.error("Error creating table: " + error.stack)
       return
     }
-    console.log("User table created/runs successfully.")
+    console.log("user table created/runs successfully.")
   })
 
   connection.release()

@@ -35,7 +35,7 @@ router.post("/", (req, res, next) => {
 
   if (username && password) {
     // console.log("Username and password are present in the request body")
-    let sql = `SELECT * FROM user WHERE username = ?`
+    let sql = `SELECT * FROM user WHERE user_username = ?`
     let values = [username]
     // console.log("Before query")
     userPool.query(sql, values, (error, results) => {

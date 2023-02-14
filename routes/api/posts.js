@@ -23,7 +23,7 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   // return res.status(200).send("This is awesome")
   let postId = req.params.id
-  // console.log(postId) //correct id of the selected post
+  console.log("postId in post.js line 26:", postId) //correct id of the selected post
   let postData = await getPosts({})
   let filteredpostData = postData.filter(
     (result) => result.postedBy.posts_Id == postId
@@ -34,6 +34,7 @@ router.get("/:id", async (req, res, next) => {
     filteredpostData: filteredpostData,
   }
 
+  console.log("filteredpostData in post.js line 37:", filteredpostData)
   if (filteredpostData.replyTo !== null) {
     results.replyTo = filteredpostData.replyTo
   }
@@ -111,13 +112,13 @@ router.post("/", (req, res, next) => {
 
         postsPool.getConnection(function (err, connection) {
           let sql =
-            "INSERT INTO posts (content, user_Id, username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?);"
+            "INSERT INTO posts (content, posts_user_Id, posts_username,imageURL, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?, ?);"
           postsPool.query(
             sql,
             [
               postData.content,
               postData.postedBy["user_id"],
-              postData.postedBy["username"],
+              postData.postedBy["user_username"],
               RDSUrl,
               timestampString,
               postData.replyTo,
@@ -149,13 +150,13 @@ router.post("/", (req, res, next) => {
 
     postsPool.getConnection(function (err, connection) {
       let sql =
-        "INSERT INTO posts (content, user_Id, username, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?);"
+        "INSERT INTO posts (content, posts_user_Id, posts_username, timefromFE,replyTo ) VALUES (?, ?, ?, ?, ?);"
       postsPool.query(
         sql,
         [
           postData.content,
           postData.postedBy["user_id"],
-          postData.postedBy["username"],
+          postData.postedBy["user_username"],
           timestampString,
           postData.replyTo,
         ],
@@ -176,7 +177,7 @@ router.post("/", (req, res, next) => {
 })
 
 router.delete("/:id", (req, res, next) => {
-  console.log(req.params.id)
+  console.log("req.params.id:", req.params.id)
   const deletePostQuery = `DELETE FROM posts WHERE posts_Id = ?;`
   const deleteLikeQuery = `DELETE FROM likes WHERE post_id = ?;`
   const params = req.params.id
@@ -203,9 +204,9 @@ router.delete("/:id", (req, res, next) => {
 async function getPosts() {
   return new Promise((resolve, reject) => {
     postsPool.query(
-      `SELECT *, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS formatted_createdAt FROM posts INNER JOIN user ON posts.user_Id=user.user_id;`,
+      `SELECT *, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS formatted_createdAt FROM posts INNER JOIN user ON posts.posts_user_Id=user.user_id;`,
       function (error, results, fields) {
-        // console.log("results in post.js:", results)
+        // console.log("results in post.js line 208:", results)
         if (error) {
           console.log(error)
           reject(error)
@@ -214,8 +215,8 @@ async function getPosts() {
             content: result.content,
             postedBy: {
               posts_Id: result.posts_Id,
-              user_Id: result.user_Id,
-              username: result.username,
+              posts_user_Id: result.posts_user_Id,
+              posts_username: result.posts_username,
               content: result.content,
               // createdAt: result.createdAt,
               // updatedAt: result.updatedAt,
@@ -233,7 +234,7 @@ async function getPosts() {
           postData.sort(function (a, b) {
             return new Date(b.postedBy.posts_Id) - new Date(a.postedBy.posts_Id)
           })
-          // console.log("postData in post.js lin 233:", postData)
+          console.log("postData in post.js lin 236:", postData) //all post data
           resolve(postData)
         }
       }

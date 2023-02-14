@@ -24,7 +24,7 @@ router.post("/", (req, res, next) => {
   let payload = req.body
 
   if (username && email && password) {
-    let sql = `SELECT * FROM user WHERE username = ? OR email = ?`
+    let sql = `SELECT * FROM user WHERE user_username = ? OR email = ?`
     let values = [username, email]
     userPool.query(sql, values, (error, results) => {
       if (error) throw error
@@ -33,7 +33,7 @@ router.post("/", (req, res, next) => {
         res.status(200).render("register", payload)
       } else {
         // inserting a new user
-        let insertSql = `INSERT INTO user (username, email, password) VALUES (?,?,?)`
+        let insertSql = `INSERT INTO user (user_username, email, password) VALUES (?,?,?)`
         let insertValues = [username, email, password]
 
         userPool.query(insertSql, insertValues, (error, results) => {

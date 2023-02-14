@@ -29,7 +29,7 @@ html(lang="en")
                 .mainSectionContainer.col-10.col-md-8.col-lg-6
                     .titleContainer
                         h1 #{pageTitle}
-                        p Hello, #{userLoggedIn.username}
+                        p Hello, #{userLoggedIn.user_username}
 
 
                     block content
@@ -44,7 +44,7 @@ html(lang="en")
         block scripts
 
         script.
-            console.log("hi, this is script from main-layout.pug")
+            //- console.log("hi, this is script from main-layout.pug")
             console.log("userId from main-layout:",#{userId})
             window.userId = !{JSON.stringify(userId)}
             //- window.userId = JSON.stringify(userId);
