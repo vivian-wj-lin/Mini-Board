@@ -1,13 +1,11 @@
 const express = require("express")
 const app = express()
-const expressLayouts = require("express-ejs-layouts")
 const router = express.Router()
 const bodyParser = require("body-parser")
 const { userPool } = require("../schemas/user")
 
 app.set("view engine", "pug")
 app.set("views", "./views")
-// app.use(expressLayouts)
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))

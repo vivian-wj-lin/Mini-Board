@@ -1,21 +1,21 @@
-console.log("loginRoutes.js is running")
+// console.log("loginRoutes.js is running")
 
-const express = require("express")
-const app = express()
-const router = express.Router()
-const bodyParser = require("body-parser")
-const { userPool } = require("../schemas/user")
+// const express = require("express")
+// const app = express()
+// const router = express.Router()
+// const bodyParser = require("body-parser")
+// const { userPool } = require("../schemas/user")
 
-router.get("/:id", (req, res, next) => {
-  let payload = {
-    pageTitle: "View post",
-    userLoggedIn: req.session.user,
-    userId: req.session.user["user_id"],
-    locals: { userId: req.session.user["user_id"] },
-    postId: req.params.id,
-  }
+// router.get("/:id", (req, res, next) => {
+//   let payload = {
+//     pageTitle: "View post",
+//     userLoggedIn: req.session.user,
+//     userId: req.session.user["user_id"],
+//     locals: { userId: req.session.user["user_id"] },
+//     postId: req.params.id,
+//   }
 
-  res.status(200).render("postPage", payload)
-})
+//   res.status(200).render("postPage", payload)
+// })
 
-module.exports = router
+// module.exports = router
