@@ -4,17 +4,7 @@ const middleware = require("./middleware")
 const path = require("path")
 const bodyParser = require("body-parser")
 const session = require("express-session")
-const mongoose = require("mongoose")
-mongoose
-  .connect(
-    "mongodb+srv://test:test@cluster0.ysgkdvn.mongodb.net/?retryWrites=true&w=majority"
-  )
-  .then(() => {
-    console.log("database connection successful")
-  })
-  .catch((err) => {
-    console.log("database connection error " + err)
-  })
+const mongoose = require("./database")
 
 const { likesPool } = require("./schemas/likeSchema.js")
 const like = require("./schemas/likeSchema.js")
