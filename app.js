@@ -15,13 +15,13 @@ app.set("views", "./views")
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, "public")))
 
-// app.use(
-//   session({
-//     secret: "morning",
-//     resave: true,
-//     saveUninitialized: false,
-//   })
-// )
+app.use(
+  session({
+    secret: "morning",
+    resave: true,
+    saveUninitialized: false,
+  })
+)
 
 //Routes
 const loginRoute = require("./routes/loginRoutes")

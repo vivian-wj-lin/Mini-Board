@@ -2,7 +2,8 @@ const express = require("express")
 const app = express()
 const router = express.Router()
 const bodyParser = require("body-parser")
-const { userPool } = require("../schemas/user")
+const bcrypt = require("bcrypt")
+const User = require("../schemas/UserSchema")
 
 app.set("view engine", "pug")
 app.set("views", "./views")
@@ -14,43 +15,41 @@ router.get("/", (req, res, next) => {
   res.status(200).render("register")
 })
 
-router.post("/", (req, res, next) => {
-  console.log(req.body)
+router.post("/", async (req, res, next) => {
   let username = req.body.username.trim()
   let email = req.body.email.trim()
   let password = req.body.password
   let payload = req.body
 
   if (username && email && password) {
-    let sql = `SELECT * FROM user WHERE username = ? OR email = ?`
-    let values = [username, email]
-    userPool.query(sql, values, (error, results) => {
-      if (error) throw error
-      if (results.length > 0) {
-        payload.errorMessage = "使用者名稱或電子信箱已存在"
-        res.status(200).render("register", payload)
-      } else {
-        // inserting a new user
-        let insertSql = `INSERT INTO user (username, email, password) VALUES (?,?,?)`
-        let insertValues = [username, email, password]
-
-        userPool.query(insertSql, insertValues, (error, results) => {
-          if (error) throw error
-          // payload.successMessage = "註冊成功，請登入"
-          // res.status(200).render("register", payload)
-          req.session.user = {
-            username: insertValues[0],
-            email: insertValues[1],
-          }
-          if (typeof window !== "undefined") {
-            alert("註冊成功，請登入")
-          }
-          return res.redirect("/login")
-        })
-      }
+    let user = await User.findOne({
+      $or: [{ username: username }, { email: email }],
+    }).catch((error) => {
+      console.log(error)
+      payload.errorMessage = "Something went wrong."
+      res.status(200).render("register", payload)
     })
+
+    if (user == null) {
+      // No user found
+      let data = req.body
+      data.password = await bcrypt.hash(password, 10)
+
+      User.create(data).then((user) => {
+        req.session.user = user
+        return res.redirect("/")
+      })
+    } else {
+      // User found
+      if (email == user.email) {
+        payload.errorMessage = "Email 已被使用"
+      } else {
+        payload.errorMessage = "使用者名稱已存在"
+      }
+      res.status(200).render("register", payload)
+    }
   } else {
-    payload.errorMessage = "請填寫完整資訊"
+    payload.errorMessage = "請輸入完整訊息"
     res.status(200).render("register", payload)
   }
 })

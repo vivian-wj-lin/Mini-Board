@@ -20,6 +20,7 @@
   "homepage": "https://github.com/vivian-wj-lin/WeHelp_3_the-project#readme",
   "dependencies": {
     "aws-sdk": "^2.1304.0",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
