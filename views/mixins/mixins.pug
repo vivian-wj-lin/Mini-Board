@@ -4,21 +4,6 @@ mixin createPostForm(userLoggedIn)
             img(src=userLoggedIn.profilePic, alt="User's profile picture")
         .textareaContainer
             textarea#postTextarea(placeholder="What's happening?")
-            //- label#upload-label(for='image-input')
-            //-     button#upload-button
-            //-         i.fa.fa-upload#testclass
-            //-         |  上傳圖片
-            //-         input#image-input(type='file' style='display:none;')
-
-
-
-            //- button#submitPostButton(disabled="") Post
-
-            //- label.posting-area(for='upload')
-            //-     .posting-area-div
-            //-         img(src='/images/upload_icon.png' alt='')
-            //-         label(for='upload') upload images
-            //-         input#upload.post-image(type='file')
 
             //- img#blah(src="" alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px;")
             - var src = "path/to/image.jpg";
@@ -27,9 +12,6 @@ mixin createPostForm(userLoggedIn)
             else
                 img#blah(alt='圖片預覽' style="display:none;")
 
-
-
-
             .imgBtnContainer
                 label(for="input-img")
                     i.fa.fa-upload#uploadImgClass
@@ -37,7 +19,8 @@ mixin createPostForm(userLoggedIn)
                     //- input(type='submit')
 
                 .buttonsContainer
-                button#submitPostButton Post
+                    //- button#submitPostButton Post
+                    button#submitPostButton(disabled="") Post
 
 
 mixin createReplyModal(userLoggedIn)

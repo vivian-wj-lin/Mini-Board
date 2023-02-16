@@ -40,7 +40,7 @@ app.use("/logout", logoutRoute)
 // app.use("/posts", middleware.requireLogin, postRoute)
 // app.use("/profile", middleware.requireLogin, profileRoute)
 
-// app.use("/api/posts", postsApiRoute)
+app.use("/api/posts", postsApiRoute)
 // app.use("/api/likes", likesApiRoute)
 
 app.get("/", middleware.requireLogin, (req, res, next) => {
