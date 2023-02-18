@@ -13,6 +13,8 @@ const UserSchema = new Schema(
       default:
         "https://msg-board-s3-bucket.s3.ap-northeast-1.amazonaws.com/msgboard/profilePic.jpeg",
     },
+    likes: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    retweets: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   { timestamps: true }
 )

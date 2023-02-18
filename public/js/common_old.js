@@ -68,6 +68,7 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
           let html = createPostHtml(postData)
           $(".postsContainer").prepend(html)
           textbox.val("")
+          imgbox.src("")
         }
       })
     }
@@ -87,6 +88,7 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
         let html = createPostHtml(postData)
         $(".postsContainer").prepend(html)
         textbox.val("")
+        imgbox.src("")
         // const PreviewImg = document.getElementById("blah")
         // PreviewImg.src = ""
 
@@ -133,76 +135,6 @@ $("#deletePostButton").click((event) => {
     },
     error: (error) => {
       console.error("Error deleting post:", error)
-    },
-  })
-})
-
-async function getLikeCounts() {
-  try {
-    let response = await $.ajax({
-      url: "/api/like-count",
-      type: "GET",
-    })
-    response.forEach((likeCount) => {
-      let postId = likeCount.post_id
-      let count = likeCount.likeCount
-      let selectedElements = $(`[data-id=${postId}] .likeButton span`)
-      selectedElements.text(count)
-    })
-  } catch (error) {
-    console.error("Error retrieving like counts:", error)
-  }
-}
-getLikeCounts()
-
-$(document).on("click", ".likeButton", (event) => {
-  let button = $(event.target)
-  let postId = getPostIdFromElement(button)
-  console.log("postId:", postId)
-  if (postId === undefined) return
-
-  $.ajax({
-    url: "/api/likes",
-    type: "GET",
-    data: { postId: postId, userId: window.userId },
-    success: (likesData) => {
-      console.log("likesData:", likesData)
-      let likeExists = likesData.some(
-        (like) => like.postId === postId && like.userId === window.userId
-      )
-      if (likeExists) {
-        // User has liked the post, perform DELETE
-        $.ajax({
-          url: "/api/likes",
-          type: "DELETE",
-          data: { postId: postId, userId: window.userId },
-          success: (postData) => {
-            console.log("Post unliked successfully:", postData)
-            // Update the UI with the new like count
-            getLikeCounts()
-          },
-          error: (error) => {
-            console.error("Error unliking post:", error)
-          },
-        })
-      } else {
-        // User has not liked the post, perform INSERT
-        $.ajax({
-          url: "/api/likes",
-          type: "POST",
-          data: { postId: postId, userId: window.userId },
-          success: (postData) => {
-            console.log("Post liked successfully:", postData)
-            // Update the UI with the new like count
-          },
-          error: (error) => {
-            console.error("Error liking post:", error)
-          },
-        })
-      }
-    },
-    error: (error) => {
-      console.error("Error checking if like exists:", error)
     },
   })
 })

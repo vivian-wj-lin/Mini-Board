@@ -4,18 +4,16 @@ mixin createPostForm(userLoggedIn)
             img(src=userLoggedIn.profilePic, alt="User's profile picture")
         .textareaContainer
             textarea#postTextarea(placeholder="What's happening?")
+            //- img#blah(src="" alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px; display: #{src ? 'block' : 'none'}")
+            img#blah(src="" alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px; display: #{src === '' ? 'none' : 'block'}")
 
-            //- img#blah(src="" alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px;")
-            - var src = "path/to/image.jpg";
-            if (src)
-                img#blah(src=src alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px;")
-            else
-                img#blah(alt='圖片預覽' style="display:none;")
+
 
             .imgBtnContainer
                 label(for="input-img")
                     i.fa.fa-upload#uploadImgClass
                     input(type="file" id="input-img" name="input-img" accept="image/*" style='display:none;' onchange="readURL(this);")
+
                     //- input(type='submit')
 
                 .buttonsContainer
