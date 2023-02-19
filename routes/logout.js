@@ -1,4 +1,4 @@
-console.log("logout.js is running")
+// console.log("logout.js is running")
 
 const express = require("express")
 const app = express()

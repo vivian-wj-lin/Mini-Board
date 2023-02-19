@@ -18,9 +18,20 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   // return res.status(200).send("This is awesome")
   let postId = req.params.id
-  let results = await getPosts({ _id: postId })
-  results = results[0]
-  console.log("results in post.js line 22", results)
+  let postData = await getPosts({ _id: postId })
+  postData = postData[0]
+
+  let results = {
+    postData: postData,
+  }
+
+  if (postData.replyTo !== undefined) {
+    results.replyTo = postData.replyTo
+  }
+
+  results.replies = await getPosts({ replyTo: postId }) //filter passed into getPosts
+
+  // console.log("results.replies", results.replies)
   res.status(200).send(results)
 })
 
@@ -48,7 +59,7 @@ router.post("/", (req, res, next) => {
       imgResult.replace(/^data:image\/\w+;base64,/, ""),
       "base64"
     )
-    console.log("imageBuffer:", imageBuffer)
+    // console.log("imageBuffer:", imageBuffer)
     const params = {
       Bucket: "msg-board-s3-bucket",
       Key: `msgboard/${time}`,
@@ -83,15 +94,15 @@ router.post("/", (req, res, next) => {
           postedBy: req.session.user,
         }
 
-        // if (req.body.replyTo) {
-        //   postData.replyTo = req.body.replyTo
-        // }
+        if (req.body.replyTo) {
+          postData.replyTo = req.body.replyTo
+        }
 
         Post.create(postData)
           .then(async (newPost) => {
-            console.log("newPost created:", newPost)
+            // console.log("newPost created:", newPost)
             newPost = await User.populate(newPost, { path: "postedBy" })
-            console.log("newPost populated with User:", newPost)
+            // console.log("newPost populated with User:", newPost)
             res.status(201).send(newPost)
           })
           .catch((error) => {
@@ -207,7 +218,13 @@ router.post("/:id/retweet", async (req, res, next) => {
 })
 
 router.delete("/:id", (req, res, next) => {
-  console.log("req.params.id:", req.params.id)
+  // console.log("req.params.id:", req.params.id)
+  Post.findByIdAndDelete(req.params.id)
+    .then(() => res.sendStatus(202))
+    .catch((error) => {
+      console.log(error)
+      res.sendStatus(400)
+    })
 })
 
 async function getPosts(filter) {

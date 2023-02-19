@@ -65,11 +65,11 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
     content: textbox.val(),
   }
 
-  if (isModal) {
-    let id = button.data().id
-    if (id == null) return alert("Button id is null")
-    data.replyTo = id
-  }
+  // if (isModal) {
+  //   let id = button.data().id
+  //   if (id == null) return alert("Button id is null")
+  //   data.replyTo = id
+  // }
 
   //both text and img msg are submitted
   if (fileInput.files.length > 0) {
@@ -93,6 +93,12 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
     console.log("data in comman.js, the FE:", data)
   } else {
     //only text msg is submitted
+    if (isModal) {
+      let id = button.data().id
+      if (id == null) return alert("Button id is null")
+      data.replyTo = id
+    }
+
     $.post("/api/posts", data, (postData, status, xhr) => {
       // console.log("postData in commona.js line26:", postData)
       if (postData.replyTo) {
@@ -110,18 +116,42 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
 })
 
 $("#replyModal").on("show.bs.modal", (event) => {
-  var button = $(event.relatedTarget)
-  var postId = getPostIdFromElement(button)
+  let button = $(event.relatedTarget)
+  let postId = getPostIdFromElement(button)
   $("#submitReplyButton").data("id", postId)
 
   $.get("/api/posts/" + postId, (results) => {
-    // console.log("the original post info once the reply is hit:", results)
-    outputPosts(results, $("#originalPostContainer"))
+    console.log("the original post info once the reply is hit:", results)
+    outputPosts(results.postData, $("#originalPostContainer"))
+    console.log("outputPosts:", results.postData)
   })
 })
 
 $("#replyModal").on("hidden.bs.modal", (event) => {
   $("#originalPostContainer").html("")
+})
+
+$("#deletePostModal").on("show.bs.modal", (event) => {
+  let button = $(event.relatedTarget)
+  let postId = getPostIdFromElement(button)
+  $("#deletePostButton").data("id", postId)
+  // console.log($("#deletePostButton").data().id)
+})
+
+$("#deletePostButton").click((event) => {
+  let postId = $(event.target).data("id")
+
+  $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "DELETE",
+    success: (data, status, xhr) => {
+      if (xhr.status != 202) {
+        alert("無法刪除")
+        return
+      }
+      location.reload()
+    },
+  })
 })
 
 $(document).on("click", ".likeButton", (event) => {
@@ -164,6 +194,15 @@ $(document).on("click", ".retweetButton", (event) => {
   })
 })
 
+$(document).on("click", ".post", (event) => {
+  let element = $(event.target)
+  let postId = getPostIdFromElement(element)
+
+  if (postId !== undefined && !element.is("button")) {
+    window.location.href = "/posts/" + postId
+  }
+})
+
 function getPostIdFromElement(element) {
   let isRoot = element.hasClass("post")
   let rootElement = isRoot == true ? element : element.closest(".post")
@@ -174,14 +213,14 @@ function getPostIdFromElement(element) {
   return postId
 }
 
-function createPostHtml(postData) {
+function createPostHtml(postData, largeFont = false) {
   if (postData == null) return alert("post object is null")
 
   let isRetweet = postData.retweetData !== undefined
   let retweetedBy = isRetweet ? postData.postedBy.username : null
   postData = isRetweet ? postData.retweetData : postData
 
-  console.log("isRetweet:", isRetweet)
+  // console.log("isRetweet:", isRetweet)
 
   let postedBy = postData.postedBy
 
@@ -192,6 +231,8 @@ function createPostHtml(postData) {
   let displayName = postedBy.username
   let timestamp = timeDifference(new Date(), new Date(postData.createdAt))
 
+  let largeFontClass = largeFont ? "largeFont" : ""
+
   let retweetText = ""
   if (isRetweet) {
     retweetText = `<span>
@@ -201,20 +242,25 @@ function createPostHtml(postData) {
   }
 
   let replyFlag = ""
-  if (postData.replyTo) {
+  if (postData.replyTo && postData.replyTo._id) {
     if (!postData.replyTo._id) {
-      return alert("Reply to is not populated")
+      return alert("ReplyTo is not populated")
     } else if (!postData.replyTo.postedBy._id) {
       return alert("Posted by is not populated")
     }
 
-    var replyToUsername = postData.replyTo.postedBy.username
+    let replyToUsername = postData.replyTo.postedBy.username
     replyFlag = `<div class='replyFlag'>
                         Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>
                     </div>`
   }
 
-  return `<div class='post' data-id="${postData._id}">
+  let buttons = ""
+  if (postData.postedBy._id == userLoggedIn._id) {
+    buttons = `<button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
+  }
+
+  return `<div class='post ${largeFontClass}' data-id="${postData._id}">
                 <div class='postActionContainer'>
                     ${retweetText}
                 </div>
@@ -229,6 +275,7 @@ function createPostHtml(postData) {
                             }'>${displayName}</a>
                             <span class='username'>@${postedBy.username}</span>
                             <span class='date'>${timestamp}</span>
+                            ${buttons}
                         </div>
                         ${replyFlag}
                         <div class='postBody'>
@@ -305,4 +352,27 @@ function outputPosts(results, container) {
   if (results.length == 0) {
     container.append("<span class='noResults'>Nothing to show.</span>")
   }
+}
+
+function outputPostsWithReplies(results, container) {
+  container.html("")
+
+  //original post to which the main post replied
+  if (results.replyTo !== undefined && results.replyTo._id !== undefined) {
+    // console.log("results:", results)
+    // console.log("results.replyTo:", results.replyTo)
+    // console.log("results.replyTo._id:", results.replyTo._id)
+    let html = createPostHtml(results.replyTo)
+    container.append(html)
+  }
+
+  //main post
+  let mainPostHtml = createPostHtml(results.postData, true)
+  container.append(mainPostHtml)
+
+  //replies
+  results.replies.forEach((result) => {
+    let html = createPostHtml(result)
+    container.append(html)
+  })
 }

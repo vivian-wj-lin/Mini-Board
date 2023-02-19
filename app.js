@@ -29,26 +29,23 @@ const profileRoute = require("./routes/profileRoutes")
 
 //Api routes
 const postsApiRoute = require("./routes/api/posts")
-const likesApiRoute = require("./routes/api/likes")
 
 app.use("/login", loginRoute)
 app.use("/register", registerRoute)
 app.use("/logout", logoutRoute)
-// app.use("/posts", middleware.requireLogin, postRoute)
+app.use("/posts", middleware.requireLogin, postRoute)
 // app.use("/profile", middleware.requireLogin, profileRoute)
 
 app.use("/api/posts", postsApiRoute)
-// app.use("/api/likes", likesApiRoute)
 
 app.get("/", middleware.requireLogin, (req, res, next) => {
   let payload = {
     pageTitle: "Home",
     userLoggedIn: req.session.user,
     userLoggedInJs: JSON.stringify(req.session.user),
-    locals: { userId: req.session.user["user_id"] },
   }
-  console.log("user in session:", req.session.user)
-  console.log(req.session.user["user_id"])
+  // console.log("user in session:", req.session.user)
+  // console.log(req.session.user["user_id"])
   res.status(200).render("home", payload)
 })
 
