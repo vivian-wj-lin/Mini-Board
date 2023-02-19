@@ -11,50 +11,26 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 router.get("/", async (req, res, next) => {
-  Post.find()
-    .populate("postedBy")
-    .populate("retweetData")
-    .sort({ createdAt: -1 })
-    .then(async (results) => {
-      results = await User.populate(results, { path: "retweetData.postedBy" })
-      res.status(200).send(results)
-    })
-    .catch((error) => {
-      console.log(error)
-      res.sendStatus(400)
-    })
+  let results = await getPosts({})
+  res.status(200).send(results)
 })
 
 router.get("/:id", async (req, res, next) => {
   // return res.status(200).send("This is awesome")
   let postId = req.params.id
-  // console.log(postId) //correct id of the selected post
-  let postData = await getPosts({})
-  let filteredpostData = postData.filter(
-    (result) => result.postedBy.posts_Id == postId
-  )[0]
-
-  let results = {
-    postData: postData,
-    filteredpostData: filteredpostData,
-  }
-
-  if (filteredpostData.replyTo !== null) {
-    results.replyTo = filteredpostData.replyTo
-  }
-
-  let replies = await getPosts({})
-  results.replies = replies.filter((reply) => reply.replyTo == postId)
-
-  console.log("filteredpostData in posts js:", filteredpostData)
-  console.log("results in posts.js:", results)
-
+  let results = await getPosts({ _id: postId })
+  results = results[0]
+  console.log("results in post.js line 22", results)
   res.status(200).send(results)
 })
 
 router.post("/", (req, res, next) => {
-  console.log("req.body in BE:", req.body)
-  console.log("req.body.content in BE:", req.body.content)
+  // console.log("req.body in BE:", req.body)
+  // console.log("req.body.content in BE:", req.body.content)
+  // if (req.body.replyTo) {
+  //   console.log("req.body.replyTo:", req.body.replyTo)
+  //   return res.sendStatus(400)
+  // }
 
   if (!req.body.content) {
     console.log("Content param not sent with request")
@@ -106,6 +82,11 @@ router.post("/", (req, res, next) => {
           imageUrl: RDSUrl,
           postedBy: req.session.user,
         }
+
+        // if (req.body.replyTo) {
+        //   postData.replyTo = req.body.replyTo
+        // }
+
         Post.create(postData)
           .then(async (newPost) => {
             console.log("newPost created:", newPost)
@@ -128,6 +109,11 @@ router.post("/", (req, res, next) => {
       content: req.body.content,
       postedBy: req.session.user,
     }
+
+    if (req.body.replyTo) {
+      postData.replyTo = req.body.replyTo
+    }
+
     Post.create(postData)
       .then(async (newPost) => {
         newPost = await User.populate(newPost, { path: "postedBy" })
@@ -224,6 +210,21 @@ router.delete("/:id", (req, res, next) => {
   console.log("req.params.id:", req.params.id)
 })
 
-async function getPosts() {}
+async function getPosts(filter) {
+  let results = await Post.find(filter)
+    .populate("postedBy")
+    .populate("retweetData")
+    .populate("replyTo")
+    .sort({ createdAt: -1 })
+    .catch((error) => {
+      console.log(error)
+    })
+  results = await User.populate(results, {
+    path: "replyTo.postedBy",
+  })
+  return await User.populate(results, {
+    path: "retweetData.postedBy",
+  })
+}
 
 module.exports = router

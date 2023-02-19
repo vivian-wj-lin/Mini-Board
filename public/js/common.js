@@ -33,11 +33,14 @@ function readURL(input) {
 //   }
 // }
 
-$("#postTextarea").keyup((event) => {
+$("#postTextarea,#replyTextarea").keyup((event) => {
   let textbox = $(event.target)
   let value = textbox.val().trim()
   // console.log("value:",value)
-  let submitButton = $("#submitPostButton")
+
+  let isModal = textbox.parents(".modal").length == 1
+
+  let submitButton = isModal ? $("#submitReplyButton") : $("#submitPostButton")
 
   if (submitButton.length == 0) return alert("No submit button found")
 
@@ -49,14 +52,23 @@ $("#postTextarea").keyup((event) => {
   submitButton.prop("disabled", false)
 })
 
-$("#submitPostButton").click((event) => {
+$("#submitPostButton,#submitReplyButton").click((event) => {
   let button = $(event.target)
-  let textbox = $("#postTextarea")
+
+  let isModal = button.parents(".modal").length == 1
+
+  let textbox = isModal ? $("#replyTextarea") : $("#postTextarea")
   let imgbox = $("#blah")
   let fileInput = document.querySelector("#input-img")
 
   let data = {
     content: textbox.val(),
+  }
+
+  if (isModal) {
+    let id = button.data().id
+    if (id == null) return alert("Button id is null")
+    data.replyTo = id
   }
 
   //both text and img msg are submitted
@@ -69,7 +81,7 @@ $("#submitPostButton").click((event) => {
       console.log("data in comman.js, the FE:", data) //both txt and img
 
       $.post("/api/posts", data, (postData, status, xhr) => {
-        console.log("postData from FE:", postData)
+        // console.log("postData from FE:", postData)
         let html = createPostHtml(postData)
         $(".postsContainer").prepend(html)
         textbox.val("") //clear the textbox after it is posted
@@ -82,15 +94,34 @@ $("#submitPostButton").click((event) => {
   } else {
     //only text msg is submitted
     $.post("/api/posts", data, (postData, status, xhr) => {
-      console.log("postData in commona.js line26:", postData)
-      let html = createPostHtml(postData)
-      $(".postsContainer").prepend(html)
-      textbox.val("") //clear the textbox after it is posted
-      imgbox.src = ""
-      fileInput.setAttribute("src", "")
-      button.prop("disabled", true)
+      // console.log("postData in commona.js line26:", postData)
+      if (postData.replyTo) {
+        location.reload()
+      } else {
+        let html = createPostHtml(postData)
+        $(".postsContainer").prepend(html)
+        textbox.val("") //clear the textbox after it is posted
+        imgbox.src = ""
+        fileInput.setAttribute("src", "")
+        button.prop("disabled", true)
+      }
     })
   }
+})
+
+$("#replyModal").on("show.bs.modal", (event) => {
+  var button = $(event.relatedTarget)
+  var postId = getPostIdFromElement(button)
+  $("#submitReplyButton").data("id", postId)
+
+  $.get("/api/posts/" + postId, (results) => {
+    // console.log("the original post info once the reply is hit:", results)
+    outputPosts(results, $("#originalPostContainer"))
+  })
+})
+
+$("#replyModal").on("hidden.bs.modal", (event) => {
+  $("#originalPostContainer").html("")
 })
 
 $(document).on("click", ".likeButton", (event) => {
@@ -169,6 +200,20 @@ function createPostHtml(postData) {
                     </span>`
   }
 
+  let replyFlag = ""
+  if (postData.replyTo) {
+    if (!postData.replyTo._id) {
+      return alert("Reply to is not populated")
+    } else if (!postData.replyTo.postedBy._id) {
+      return alert("Posted by is not populated")
+    }
+
+    var replyToUsername = postData.replyTo.postedBy.username
+    replyFlag = `<div class='replyFlag'>
+                        Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>
+                    </div>`
+  }
+
   return `<div class='post' data-id="${postData._id}">
                 <div class='postActionContainer'>
                     ${retweetText}
@@ -185,6 +230,7 @@ function createPostHtml(postData) {
                             <span class='username'>@${postedBy.username}</span>
                             <span class='date'>${timestamp}</span>
                         </div>
+                        ${replyFlag}
                         <div class='postBody'>
                             <span>${postData.content}</span>
                             <br>
@@ -194,7 +240,7 @@ function createPostHtml(postData) {
                         </div>
                         <div class='postFooter'>
                         <div class='postButtonContainer'>
-                                <button>
+                                <button data-toggle='modal' data-target='#replyModal'>
                                     <i class='far fa-comment'></i>
                                 </button>
                             </div>
@@ -241,5 +287,22 @@ function timeDifference(current, previous) {
     return Math.round(elapsed / msPerMonth) + " months ago"
   } else {
     return Math.round(elapsed / msPerYear) + " years ago"
+  }
+}
+
+function outputPosts(results, container) {
+  container.html("")
+
+  if (!Array.isArray(results)) {
+    results = [results]
+  }
+
+  results.forEach((result) => {
+    let html = createPostHtml(result)
+    container.append(html)
+  })
+
+  if (results.length == 0) {
+    container.append("<span class='noResults'>Nothing to show.</span>")
   }
 }
