@@ -4,6 +4,7 @@
   --green: #90a93a;
   --greenLight: #b4ca65;
   --blueGreen: #397884;
+  --blueGreenBackground: #a7d8e1;
   --pink: #dabcb4;
   --buttonHoverBg: #d4edff;
   --lightGrey: rgb(230, 236, 240);
@@ -319,5 +320,59 @@ button span {
 
 .profileButton:hover,
 .followButton:hover {
-  background-color: var(--blueBackground);
+  background-color: var(--blueGreenBackground);
+}
+
+.followButton.following {
+  background-color: var(--blueGreen);
+  color: #fff;
+}
+
+.profileHeaderContainer .userDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--spacing);
+}
+
+.followersContainer .value {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.followersContainer span:not(.value) {
+  color: var(--greyText);
+}
+
+.followersContainer a {
+  margin-right: 15px;
+}
+
+.followersContainer a:hover {
+  border-bottom: 1px solid #000;
+}
+
+.tabsContainer {
+  display: flex;
+  border-bottom: 1px solid var(--lightGrey);
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--greyText);
+  font-weight: bold;
+}
+
+.tab.active {
+  color: var(--blueGreen);
+  border-bottom: 2px solid var(--blueGreen);
+}
+
+.tab:hover {
+  color: var(--blueGreen);
+  background-color: var(--blueGreenBackground);
 }

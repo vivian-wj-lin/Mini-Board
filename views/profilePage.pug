@@ -3,17 +3,36 @@ extends layouts/main-layout.pug
 block content
     if !profileUser
         span.errorMessage 查無使用者
-    else  
+    else
+        script.
+            let profileUserId = '!{profileUser._id}';
+            let selectedTab = '!{selectedTab}';
+
         .profileHeaderContainer
             .coverPhotoContainer
 
                 .userImageContainer
                     img(src="https://msg-board-s3-bucket.s3.ap-northeast-1.amazonaws.com/msgboard/profilePic.jpeg" alt="User profile image")
             .profileButtonsContainer
-                if profileUser.user_id != userLoggedIn.user_id
-                    a.profileButton(href=`/messages/${profileUser.user_id}`)
+                if profileUser._id != userLoggedIn._id
+                    a.profileButton(href=`/messages/${profileUser._id}`)
                         i.fas.fa-envelope
                     +createFollowButton(profileUser, false)
+            .userDetailsContainer
+                span.displayName #{profileUser.username}
+                span.username @#{profileUser.username}
+                span.description #{profileUser.description}
+
+                .followersContainer
+                    a(href=`/profile/${profileUser.username}/following`)
+                        span.value #{0}
+                        span Following
+                    a(href=`/profile/${profileUser.username}/followers`)
+                        span.value #{0}
+                        span Followers
+        .tabsContainer
+            +createTab("Posts",`/profile/${profileUser.username}`, selectedTab != replies)
+            +createTab("Replies",`/profile/${profileUser.username}/replies`, selectedTab == replies)
 
         .postsContainer
 
@@ -21,3 +40,4 @@ block content
 
 block scripts
     script(src="/js/profile.js")
+
