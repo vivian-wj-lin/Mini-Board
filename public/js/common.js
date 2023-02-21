@@ -210,12 +210,20 @@ $(document).on("click", ".followButton", (event) => {
   $.ajax({
     url: `/api/users/${userId}/follow`,
     type: "PUT",
-    success: (data) => {
-      // console.log("req.session.user data:", data)
-      // button.find("span").text(postData.retweetUsers.length || "")
-      // setTimeout(() => {
-      //   window.location.href = "/"
-      // }, 500)
+    success: (data, status, xhr) => {
+      if (xhr.status == 404) {
+        alert("user not found")
+        return
+      }
+      // console.log("userLoggedIn data:", data)
+
+      if (data.following && data.following.includes(userId)) {
+        button.addClass("following")
+        button.text("Following")
+      } else {
+        button.removeClass("following")
+        button.text("Follow")
+      }
     },
   })
 })
