@@ -203,6 +203,23 @@ $(document).on("click", ".post", (event) => {
   }
 })
 
+$(document).on("click", ".followButton", (event) => {
+  let button = $(event.target)
+  let userId = button.data().user
+  // console.log("userId:", userId)
+  $.ajax({
+    url: `/api/users/${userId}/follow`,
+    type: "PUT",
+    success: (data) => {
+      // console.log("req.session.user data:", data)
+      // button.find("span").text(postData.retweetUsers.length || "")
+      // setTimeout(() => {
+      //   window.location.href = "/"
+      // }, 500)
+    },
+  })
+})
+
 function getPostIdFromElement(element) {
   let isRoot = element.hasClass("post")
   let rootElement = isRoot == true ? element : element.closest(".post")
