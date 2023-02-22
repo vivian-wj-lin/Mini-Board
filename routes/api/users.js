@@ -2,8 +2,17 @@ const express = require("express")
 const app = express()
 const router = express.Router()
 const bodyParser = require("body-parser")
+const multer = require("multer")
+const upload = multer({ dest: "" })
 const User = require("../../schemas/UserSchema")
 const Post = require("../../schemas/postSchema")
+const AWS = require("aws-sdk")
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+})
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -62,5 +71,37 @@ router.get("/:userId/followers", async (req, res, next) => {
       res.sendStatus(400)
     })
 })
+
+router.post(
+  "/profilePicture",
+  upload.single("croppedImage"),
+  async (req, res, next) => {
+    if (!req.file) {
+      //req.file is retrieved with multer
+      console.log("No file uploaded with ajax request.")
+      return res.sendStatus(400)
+    }
+    // console.log("req.file:", req.file)
+    const time = Date.now()
+
+    const params = {
+      Bucket: "msg-board-s3-bucket",
+      Key: `msgboard/${time}`,
+      Body: req.file.buffer,
+      ContentType: "image/png",
+    }
+
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.log(err)
+        res.status(500).json({ result: "error" })
+      } else {
+        RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
+        console.log("RDSUrl:", RDSUrl)
+        res.status(200).json({ result: "success", RDSUrl: RDSUrl })
+      }
+    })
+  }
+)
 
 module.exports = router

@@ -1,5 +1,6 @@
 const fileReader = new FileReader()
 const fileInput = document.querySelector('input[type="file"]')
+let cropper
 
 // hide img which src is empty //then the img preview won't work
 // $(document).ready(function () {
@@ -151,6 +152,91 @@ $("#deletePostButton").click((event) => {
       }
       location.reload()
     },
+  })
+})
+
+$("#filePhoto").change(function () {
+  if (this.files && this.files[0]) {
+    fileReader.onload = (e) => {
+      let image = document.getElementById("imagePreview")
+      image.src = e.target.result
+
+      if (cropper !== undefined) {
+        cropper.destroy()
+      }
+
+      cropper = new Cropper(image, {
+        aspectRatio: 1 / 1,
+        background: false,
+      })
+    }
+    fileReader.readAsDataURL(this.files[0])
+  } else {
+    console.log("no img")
+  }
+})
+
+// $("#imageUploadButton").click(() => {
+//   let canvas = cropper.getCroppedCanvas()
+//   if (canvas == null) {
+//     alert("無法上傳照片，請確認檔案格式")
+//     return
+//   }
+
+//   canvas.toBlob((blob) => {
+//     let formData = new FormData()
+//     formData.append("croppedImage", blob)
+//     // console.log("formData:", formData)
+//     $.ajax({
+//       url: "/api/users/profilePicture",
+//       type: "POST",
+//       data: formData,
+//       processData: false, //prevent jQuery from converting data to string
+//       contentType: false,
+//       success: () => {
+//         location.reload
+//       },
+//     })
+//   })
+// })
+
+$("#imageUploadButton").click(() => {
+  let canvas = cropper.getCroppedCanvas()
+  if (canvas == null) {
+    alert("無法上傳照片，請確認檔案格式")
+    return
+  }
+
+  console.log("canvas:", canvas)
+
+  canvas.toBlob((blob) => {
+    console.log("blob:", blob)
+
+    if (!blob) {
+      console.log("Error: Empty blob.")
+      return
+    }
+
+    let formData = new FormData()
+    formData.append("croppedImage", blob)
+    formData.forEach(function (value, key) {
+      console.log(key + ": " + value)
+    })
+    console.log("formData:", formData)
+    $.ajax({
+      url: "/api/users/profilePicture",
+      type: "POST",
+      data: formData,
+      processData: false, //prevent jQuery from converting data to string
+      contentType: false,
+      enctype: "multipart/form-data",
+      success: () => {
+        location.reload
+      },
+      error: (xhr, status, error) => {
+        console.log(xhr, status, error)
+      },
+    })
   })
 })
 
