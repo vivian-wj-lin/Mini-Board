@@ -18,11 +18,11 @@ router.get("/", (req, res, next) => {
 router.post("/", async (req, res, next) => {
   let payload = req.body
 
-  if (req.body.logUsername && req.body.logPassword) {
+  if (req.body.logAccountname && req.body.logPassword) {
     let user = await User.findOne({
       $or: [
-        { username: req.body.logUsername },
-        { email: req.body.logUsername },
+        { accountname: req.body.logAccountname },
+        { email: req.body.logAccountname },
       ],
     }).catch((error) => {
       console.log(error)

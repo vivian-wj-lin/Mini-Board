@@ -252,7 +252,7 @@ function createPostHtml(postData, largeFont = false) {
   if (postData == null) return alert("post object is null")
 
   let isRetweet = postData.retweetData !== undefined
-  let retweetedBy = isRetweet ? postData.postedBy.username : null
+  let retweetedBy = isRetweet ? postData.postedBy.accountname : null
   postData = isRetweet ? postData.retweetData : postData
 
   // console.log("isRetweet:", isRetweet)
@@ -284,9 +284,9 @@ function createPostHtml(postData, largeFont = false) {
       return alert("Posted by is not populated")
     }
 
-    let replyToUsername = postData.replyTo.postedBy.username
+    let replyToAccountname = postData.replyTo.postedBy.accountname
     replyFlag = `<div class='replyFlag'>
-                        Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>
+                        Replying to <a href='/profile/${replyToAccountname}'>@${replyToAccountname}<a>
                     </div>`
   }
 
@@ -306,9 +306,11 @@ function createPostHtml(postData, largeFont = false) {
                     <div class='postContentContainer'>
                         <div class='header'>
                             <a href='/profile/${
-                              postedBy.username
+                              postedBy.accountname
                             }'>${displayName}</a>
-                            <span class='username'>@${postedBy.username}</span>
+                            <span class='accountname'>@${
+                              postedBy.accountname
+                            }</span>
                             <span class='date'>${timestamp}</span>
                             ${buttons}
                         </div>

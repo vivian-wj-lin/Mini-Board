@@ -53,8 +53,8 @@ function createUserHtml(userData, showFollowButton) {
             </div>
             <div class="userDetailsContainer">
               <div class="header">
-                <a href="/profile/${name}">${name}</a>
-                <span class="username">@${name}<span>
+                <a href="/profile/${userData.accountname}">${name}</a>
+                <span class="accountname">@${userData.accountname}<span>
               </div>
             </div>
             ${followButton}

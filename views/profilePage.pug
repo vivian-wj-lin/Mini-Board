@@ -29,19 +29,19 @@ block content
 
             .userDetailsContainer
                 span.displayName #{profileUser.username}
-                span.username @#{profileUser.username}
+                span.accountname @#{profileUser.accountname}
                 span.description #{profileUser.description}
 
                 .followersContainer
-                    a(href=`/profile/${profileUser.username}/following`)
+                    a(href=`/profile/${profileUser.accountname}/following`)
                         span.value #{followingCount}
                         span Following
-                    a(href=`/profile/${profileUser.username}/followers`)
+                    a(href=`/profile/${profileUser.accountname}/followers`)
                         span#followersValue.value #{followersCount}
                         span Followers
         .tabsContainer
-            +createTab("Posts",`/profile/${profileUser.username}`, selectedTab != replies)
-            +createTab("Replies",`/profile/${profileUser.username}/replies`, selectedTab == replies)
+            +createTab("Posts",`/profile/${profileUser.accountname}`, selectedTab != replies)
+            +createTab("Replies",`/profile/${profileUser.accountname}/replies`, selectedTab == replies)
 
         .postsContainer
 

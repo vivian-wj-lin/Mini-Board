@@ -7,7 +7,8 @@ block content
 
             p.errorMessage #{errorMessage}
 
-            input(type="text" name="username" placeholder="Username 使用者名稱", value=username required="")
+            input(type="text" name="username" placeholder="Username 姓名/暱稱", value=username required="")
+            input(type="text" name="accountname" placeholder="Account name 帳戶名稱", value=accountname required="")
             input(type="email" name="email" placeholder="Email 電子郵件", value=email required="")
             input#password(type="password" name="password" placeholder="Password 密碼" required="")
             input#passwordConf(type="password" name="passwordConf" placeholder="Confirm password 再次確認密碼" required="")

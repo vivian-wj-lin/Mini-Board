@@ -17,13 +17,14 @@ router.get("/", (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   let username = req.body.username.trim()
+  let accountname = req.body.accountname.trim()
   let email = req.body.email.trim()
   let password = req.body.password
   let payload = req.body
 
-  if (username && email && password) {
+  if (username && accountname && email && password) {
     let user = await User.findOne({
-      $or: [{ username: username }, { email: email }],
+      $or: [{ accountname: accountname }, { email: email }],
     }).catch((error) => {
       console.log(error)
       payload.errorMessage = "Something went wrong."
@@ -44,7 +45,7 @@ router.post("/", async (req, res, next) => {
       if (email == user.email) {
         payload.errorMessage = "Email 已被使用"
       } else {
-        payload.errorMessage = "使用者名稱已存在"
+        payload.errorMessage = "帳號名稱已存在"
       }
       res.status(200).render("register", payload)
     }

@@ -210,12 +210,12 @@ button span {
   flex: 1;
 }
 
-.username,
+.accountname,
 .date {
   color: var(--greyText);
 }
 
-.username {
+.accountname {
   font-weight: bold;
 }
 
