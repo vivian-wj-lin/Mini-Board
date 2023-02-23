@@ -91,13 +91,22 @@ router.post(
       ContentType: "image/png",
     }
 
-    s3.upload(params, (err, data) => {
+    s3.upload(params, async (err, data) => {
       if (err) {
         console.log(err)
         res.status(500).json({ result: "error" })
       } else {
         RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
         console.log("RDSUrl:", RDSUrl)
+        // res.status(200).json({ result: "success", RDSUrl: RDSUrl })
+
+        req.session.user = await User.findByIdAndUpdate(
+          req.session.user._id,
+          {
+            profilePic: RDSUrl,
+          },
+          { new: true }
+        )
         res.status(200).json({ result: "success", RDSUrl: RDSUrl })
       }
     })

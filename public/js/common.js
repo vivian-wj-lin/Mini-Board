@@ -176,41 +176,16 @@ $("#filePhoto").change(function () {
   }
 })
 
-// $("#imageUploadButton").click(() => {
-//   let canvas = cropper.getCroppedCanvas()
-//   if (canvas == null) {
-//     alert("無法上傳照片，請確認檔案格式")
-//     return
-//   }
-
-//   canvas.toBlob((blob) => {
-//     let formData = new FormData()
-//     formData.append("croppedImage", blob)
-//     // console.log("formData:", formData)
-//     $.ajax({
-//       url: "/api/users/profilePicture",
-//       type: "POST",
-//       data: formData,
-//       processData: false, //prevent jQuery from converting data to string
-//       contentType: false,
-//       success: () => {
-//         location.reload
-//       },
-//     })
-//   })
-// })
-
 $("#imageUploadButton").click(() => {
   let canvas = cropper.getCroppedCanvas()
   if (canvas == null) {
     alert("無法上傳照片，請確認檔案格式")
     return
   }
-
-  console.log("canvas:", canvas)
+  // console.log("canvas:", canvas)
 
   canvas.toBlob((blob) => {
-    console.log("blob:", blob)
+    // console.log("blob:", blob)
 
     if (!blob) {
       console.log("Error: Empty blob.")
@@ -231,7 +206,7 @@ $("#imageUploadButton").click(() => {
       contentType: false,
       enctype: "multipart/form-data",
       success: () => {
-        location.reload
+        location.reload()
       },
       error: (xhr, status, error) => {
         console.log(xhr, status, error)

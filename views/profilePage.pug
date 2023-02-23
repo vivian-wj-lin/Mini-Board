@@ -15,7 +15,7 @@ block content
             .coverPhotoContainer
 
                 .userImageContainer
-                    img(src="https://msg-board-s3-bucket.s3.ap-northeast-1.amazonaws.com/msgboard/profilePic.jpeg" alt="User profile image")
+                    img(src=profileUser.profilePic alt="User profile image")
 
                     if profileUser._id == userLoggedIn._id
                         button.profilePictureButton(data-toggle="modal" data-target="#imageUploadModal")
