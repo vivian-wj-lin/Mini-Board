@@ -176,6 +176,25 @@ $("#filePhoto").change(function () {
   }
 })
 
+$("#coverPhoto").change(function () {
+  if (this.files && this.files[0]) {
+    fileReader.onload = (e) => {
+      let image = document.getElementById("coverPreview")
+      image.src = e.target.result
+
+      if (cropper !== undefined) {
+        cropper.destroy()
+      }
+
+      cropper = new Cropper(image, {
+        aspectRatio: 16 / 9,
+        background: false,
+      })
+    }
+    fileReader.readAsDataURL(this.files[0])
+  }
+})
+
 $("#imageUploadButton").click(() => {
   let canvas = cropper.getCroppedCanvas()
   if (canvas == null) {
@@ -200,6 +219,45 @@ $("#imageUploadButton").click(() => {
     console.log("formData:", formData)
     $.ajax({
       url: "/api/users/profilePicture",
+      type: "POST",
+      data: formData,
+      processData: false, //prevent jQuery from converting data to string
+      contentType: false,
+      enctype: "multipart/form-data",
+      success: () => {
+        location.reload()
+      },
+      error: (xhr, status, error) => {
+        console.log(xhr, status, error)
+      },
+    })
+  })
+})
+
+$("#coverPhotoButton").click(() => {
+  let canvas = cropper.getCroppedCanvas()
+  if (canvas == null) {
+    alert("無法上傳照片，請確認檔案格式")
+    return
+  }
+  // console.log("canvas:", canvas)
+
+  canvas.toBlob((blob) => {
+    // console.log("blob:", blob)
+
+    if (!blob) {
+      console.log("Error: Empty blob.")
+      return
+    }
+
+    let formData = new FormData()
+    formData.append("croppedImage", blob)
+    formData.forEach(function (value, key) {
+      console.log(key + ": " + value)
+    })
+    console.log("formData:", formData)
+    $.ajax({
+      url: "/api/users/coverPhoto",
       type: "POST",
       data: formData,
       processData: false, //prevent jQuery from converting data to string

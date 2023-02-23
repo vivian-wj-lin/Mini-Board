@@ -98,12 +98,51 @@ router.post(
       } else {
         RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
         console.log("RDSUrl:", RDSUrl)
-        // res.status(200).json({ result: "success", RDSUrl: RDSUrl })
 
         req.session.user = await User.findByIdAndUpdate(
           req.session.user._id,
           {
             profilePic: RDSUrl,
+          },
+          { new: true }
+        )
+        res.status(200).json({ result: "success", RDSUrl: RDSUrl })
+      }
+    })
+  }
+)
+
+router.post(
+  "/coverPhoto",
+  upload.single("croppedImage"),
+  async (req, res, next) => {
+    if (!req.file) {
+      //req.file is retrieved with multer
+      console.log("No file uploaded with ajax request.")
+      return res.sendStatus(400)
+    }
+    // console.log("req.file:", req.file)
+    const time = Date.now()
+
+    const params = {
+      Bucket: "msg-board-s3-bucket",
+      Key: `msgboard/${time}`,
+      Body: req.file.buffer,
+      ContentType: "image/png",
+    }
+
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        console.log(err)
+        res.status(500).json({ result: "error" })
+      } else {
+        RDSUrl = "https://dk0tbawkd0lmu.cloudfront.net" + `/msgboard/${time}`
+        console.log("RDSUrl:", RDSUrl)
+
+        req.session.user = await User.findByIdAndUpdate(
+          req.session.user._id,
+          {
+            coverPhoto: RDSUrl,
           },
           { new: true }
         )
