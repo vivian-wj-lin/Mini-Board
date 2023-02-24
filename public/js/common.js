@@ -139,6 +139,20 @@ $("#deletePostModal").on("show.bs.modal", (event) => {
   // console.log($("#deletePostButton").data().id)
 })
 
+$("#confirmPinModal").on("show.bs.modal", (event) => {
+  let button = $(event.relatedTarget)
+  let postId = getPostIdFromElement(button)
+  $("#pinPostButton").data("id", postId)
+  // console.log($("#pinPostButton").data().id)
+})
+
+$("#unpinModal").on("show.bs.modal", (event) => {
+  let button = $(event.relatedTarget)
+  let postId = getPostIdFromElement(button)
+  $("#unpinPostButton").data("id", postId)
+  // console.log($("#unpinPostButton").data().id)
+})
+
 $("#deletePostButton").click((event) => {
   let postId = $(event.target).data("id")
 
@@ -148,6 +162,40 @@ $("#deletePostButton").click((event) => {
     success: (data, status, xhr) => {
       if (xhr.status != 202) {
         alert("無法刪除")
+        return
+      }
+      location.reload()
+    },
+  })
+})
+
+$("#pinPostButton").click((event) => {
+  let postId = $(event.target).data("id")
+
+  $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "PUT",
+    data: { pinned: true },
+    success: (data, status, xhr) => {
+      if (xhr.status != 204) {
+        alert("無法置頂")
+        return
+      }
+      location.reload()
+    },
+  })
+})
+
+$("#unpinPostButton").click((event) => {
+  let postId = $(event.target).data("id")
+
+  $.ajax({
+    url: `/api/posts/${postId}`,
+    type: "PUT",
+    data: { pinned: false },
+    success: (data, status, xhr) => {
+      if (xhr.status != 204) {
+        alert("無法取消置頂")
         return
       }
       location.reload()
@@ -410,8 +458,18 @@ function createPostHtml(postData, largeFont = false) {
   }
 
   let buttons = ""
+  let pinnedPostText = ""
   if (postData.postedBy._id == userLoggedIn._id) {
-    buttons = `<button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
+    let pinnedClass = ""
+    let dataTarget = "#confirmPinModal"
+    if (postData.pinned === true) {
+      pinnedClass = "active"
+      dataTarget = "#unpinModal"
+      pinnedPostText = "<i class='fas fa-thumbtack'></i> <span>置頂貼文</span>"
+    }
+
+    buttons = ` <button class="pinButton ${pinnedClass}" data-id="${postData._id}" data-toggle="modal" data-target="${dataTarget}"><i class='fas fa-thumbtack'></i></button>
+                <button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
   }
 
   return `<div class='post ${largeFontClass}' data-id="${postData._id}">
@@ -423,6 +481,7 @@ function createPostHtml(postData, largeFont = false) {
                         <img src='${postedBy.profilePic}'>
                     </div>
                     <div class='postContentContainer'>
+                        <div class="pinnedPostText">${pinnedPostText}</div>
                         <div class='header'>
                             <a href='/profile/${
                               postedBy.accountname

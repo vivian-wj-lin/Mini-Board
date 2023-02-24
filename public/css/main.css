@@ -1,3 +1,6 @@
+/* main icon 
+<div> Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik"> Freepik </a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com'</a></div> */
+
 :root {
   --blue: #1fa2f1;
   --blueLight: #9bd1f9;
@@ -439,4 +442,17 @@ button span {
   display: block;
   /* This rule is very important, please don't ignore this */
   max-width: 100%;
+}
+
+.pinButton.active {
+  color: var(--blueGreen);
+}
+
+.pinnedPostText {
+  font-size: 12px;
+  color: var(--greyText);
+}
+
+.pinnedPostContainer {
+  border-bottom: 10px solid rgb(230, 236, 240);
 }
