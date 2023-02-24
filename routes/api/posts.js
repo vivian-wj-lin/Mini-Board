@@ -20,6 +20,11 @@ router.get("/", async (req, res, next) => {
     delete searchObj.isReply
     // console.log("searchObj:", searchObj)
   }
+
+  if (searchObj.search !== undefined) {
+    searchObj.content = { $regex: searchObj.search, $options: "i" }
+    delete searchObj.search
+  }
   let results = await getPosts(searchObj)
   res.status(200).send(results)
 })

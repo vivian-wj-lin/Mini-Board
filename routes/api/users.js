@@ -16,6 +16,26 @@ const s3 = new AWS.S3({
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
+router.get("/", async (req, res, next) => {
+  let searchObj = req.query
+
+  if (req.query.search !== undefined) {
+    searchObj = {
+      $or: [
+        { username: { $regex: req.query.search, $options: "i" } },
+        { accountname: { $regex: req.query.search, $options: "i" } },
+      ],
+    }
+  }
+
+  User.find(searchObj)
+    .then((results) => res.status(200).send(results))
+    .catch((error) => {
+      console.log(error)
+      res.sendStatus(400)
+    })
+})
+
 router.put("/:userId/follow", async (req, res, next) => {
   let userId = req.params.userId
 
