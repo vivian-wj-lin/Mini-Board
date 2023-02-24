@@ -1,6 +1,7 @@
 const fileReader = new FileReader()
 const fileInput = document.querySelector('input[type="file"]')
 let cropper
+let timer
 
 // hide img which src is empty //then the img preview won't work
 // $(document).ready(function () {
@@ -321,6 +322,28 @@ $("#coverPhotoButton").click(() => {
   })
 })
 
+$("#userSearchTextbox").keydown((event) => {
+  clearTimeout(timer)
+  let textbox = $(event.target)
+  let value = textbox.val()
+
+  if (value == "" && event.keycode == 8) {
+    //remove user from selection
+    return
+  }
+
+  timer = setTimeout(() => {
+    value = textbox.val().trim()
+
+    if (value == "") {
+      $(".resultsContainer").html("")
+    } else {
+      //   console.log(value)
+      searchUsers(value)
+    }
+  }, 1000)
+})
+
 $(document).on("click", ".likeButton", (event) => {
   let button = $(event.target)
   let postId = getPostIdFromElement(button)
@@ -633,4 +656,8 @@ function createUserHtml(userData, showFollowButton) {
             </div>
             ${followButton}
           </div>`
+}
+
+function searchUsers(searchTerm) {
+  console.log("hi")
 }
