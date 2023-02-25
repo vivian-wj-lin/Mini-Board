@@ -2,6 +2,7 @@ const fileReader = new FileReader()
 const fileInput = document.querySelector('input[type="file"]')
 let cropper
 let timer
+let selectedUsers = []
 
 // hide img which src is empty //then the img preview won't work
 // $(document).ready(function () {
@@ -327,8 +328,15 @@ $("#userSearchTextbox").keydown((event) => {
   let textbox = $(event.target)
   let value = textbox.val()
 
-  if (value == "" && event.keycode == 8) {
+  if (value == "" && (event.which == 8 || event.keyCode == 8)) {
     //remove user from selection
+    selectedUsers.pop()
+    updateSelectedUsersHtml()
+    $(".resultsContainer").html("")
+
+    if (selectedUsers.length == 0) {
+      $("#createChatButton").prop("disabled", true)
+    }
     return
   }
 
@@ -659,5 +667,59 @@ function createUserHtml(userData, showFollowButton) {
 }
 
 function searchUsers(searchTerm) {
-  console.log("hi")
+  $.get("/api/users", { search: searchTerm }, (results) => {
+    outputSelectableUsers(results, $(".resultsContainer"))
+  })
+}
+
+function outputSelectableUsers(results, container) {
+  container.html("")
+
+  results.forEach((result) => {
+    if (
+      //not user himself and not the users that has been selected
+      result._id == userLoggedIn._id ||
+      selectedUsers.some((u) => {
+        return u._id == result._id
+      })
+    ) {
+      return
+    }
+
+    let html = createUserHtml(result, false)
+    //"false" for not showing the follow button
+    let element = $(html)
+    element.click(() => {
+      userSelected(result)
+    })
+    container.append(element)
+  })
+
+  if (results.length == 0) {
+    container.append(
+      "<span class='noResults'>No results found 查無使用者</span>"
+    )
+  }
+}
+
+function userSelected(user) {
+  // console.log(user.username)
+  selectedUsers.push(user)
+  updateSelectedUsersHtml()
+  $("#userSearchTextbox").val("").focus()
+  $(".resultsContainer").html("")
+  $("#createChatButton").prop("disabled", false)
+  console.log("selectedUsers:", selectedUsers)
+}
+
+function updateSelectedUsersHtml() {
+  let elements = []
+  selectedUsers.forEach((user) => {
+    let name = user.username
+    let userElement = $(`<span class='selectedUser'>${name}</span>`)
+    elements.push(userElement)
+  })
+
+  $(".selectedUser").remove()
+  $("#selectedUsers").prepend(elements)
 }
