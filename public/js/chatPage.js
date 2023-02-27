@@ -20,3 +20,34 @@ $("#chatNameButton").click(() => {
     },
   })
 })
+
+$(".sendMessageButton").click(() => {
+  messageSubmitted()
+})
+
+$(".inputTextbox").keydown((event) => {
+  if (event.which === 13) {
+    messageSubmitted()
+    return false //preventing a new line if the enter key is pressed
+  }
+})
+
+function messageSubmitted() {
+  let content = $(".inputTextbox").val().trim()
+
+  if (content != "") {
+    sendMessage(content)
+    $(".inputTextbox").val("")
+  }
+}
+
+function sendMessage(content) {
+  //   console.log(content)
+  $.post(
+    "/api/messages",
+    { content: content, chatId: chatId },
+    (data, status, xhr) => {
+      console.log(data)
+    }
+  )
+}
