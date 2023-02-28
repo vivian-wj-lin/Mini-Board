@@ -1,4 +1,11 @@
+let typing = false
+let lastTypingTime
+
 $(document).ready(() => {
+  socket.emit("join room", chatId)
+  socket.on("typing", () => $(".typingDots").show())
+  socket.on("stop typing", () => $(".typingDots").hide())
+
   $.get(`/api/chats/${chatId}`, (data) => {
     $("#chatName").text(getChatName(data))
   })
@@ -45,11 +52,36 @@ $(".sendMessageButton").click(() => {
 })
 
 $(".inputTextbox").keydown((event) => {
+  updateTyping()
+
   if (event.which === 13) {
     messageSubmitted()
     return false //preventing a new line if the enter key is pressed
   }
 })
+
+function updateTyping() {
+  if (!connected) {
+    return
+  }
+
+  if (!typing) {
+    typing = true
+    socket.emit("typing", chatId)
+  }
+  lastTypingTime = new Date().getTime()
+  let timerLength = 3000
+
+  setTimeout(() => {
+    let timeNow = new Date().getTime()
+    let timeDiff = timeNow - lastTypingTime
+
+    if (timeDiff >= timerLength && typing) {
+      socket.emit("stop typing", chatId)
+      typing = false
+    }
+  }, timerLength)
+}
 
 function addMessagesHtmlToPage(html) {
   $(".chatMessages").append(html)
@@ -61,6 +93,8 @@ function messageSubmitted() {
   if (content != "") {
     sendMessage(content)
     $(".inputTextbox").val("")
+    socket.emit("stop typing", chatId)
+    typing = false
   }
 }
 
@@ -77,6 +111,10 @@ function sendMessage(content) {
         return
       }
       addChatMessageHtml(data)
+
+      if (connected) {
+        socket.emit("new message", data)
+      }
     }
   )
 }

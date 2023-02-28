@@ -16,7 +16,11 @@ block content
                 .loadingSpinnerContainer
                     img(src="https://msg-board-s3-bucket.s3.ap-northeast-1.amazonaws.com/msgboard/loadingSpinner.gif" alt="Loading spinner")
                 .chatContainer(style="visibility:hidden")
-                    .chatMessages
+                    ul.chatMessages
+
+                    .typingDots
+                        img(src="https://msg-board-s3-bucket.s3.ap-northeast-1.amazonaws.com/msgboard/dots.gif" alt="Typing dots")
+
                     .footer
                         textarea.inputTextbox(name="messageInput" placeholder="Type a message 輸入訊息...")
                         button.sendMessageButton
