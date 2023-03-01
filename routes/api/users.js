@@ -6,6 +6,7 @@ const multer = require("multer")
 const upload = multer({ dest: "" })
 const User = require("../../schemas/UserSchema")
 const Post = require("../../schemas/postSchema")
+const Notification = require("../../schemas/NotificationSchema")
 const AWS = require("aws-sdk")
 
 const s3 = new AWS.S3({
@@ -65,6 +66,14 @@ router.put("/:userId/follow", async (req, res, next) => {
     res.sendStatus(400)
   })
 
+  if (!isFollowing) {
+    await Notification.insertNotification(
+      userId,
+      req.session.user._id,
+      "follow",
+      req.session.user._id
+    )
+  }
   res.status(200).send(req.session.user)
 })
 
