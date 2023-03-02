@@ -4,6 +4,11 @@ let cropper
 let timer
 let selectedUsers = []
 
+$(document).ready(() => {
+  refreshMessagesBadge()
+  refreshNotificationsBadge()
+})
+
 // hide img which src is empty //then the img preview won't work
 // $(document).ready(function () {
 //   $("img")
@@ -446,7 +451,7 @@ $(document).on("click", ".followButton", (event) => {
   })
 })
 
-$(document).on("click", ".notification.active", () => {
+$(document).on("click", ".notification.active", (e) => {
   let container = $(e.target)
   let notificationId = container.data().id
 
@@ -769,10 +774,13 @@ function messageReceived(newMessage) {
   } else {
     addChatMessageHtml(newMessage)
   }
+  refreshMessagesBadge()
 }
 
 function markNotificationsAsOpened(notificationId = null, callback = null) {
   if (callback == null) callback = () => location.reload()
+
+  console.log("notificationId:", notificationId)
 
   let url =
     notificationId != null
@@ -782,5 +790,32 @@ function markNotificationsAsOpened(notificationId = null, callback = null) {
     url: url,
     type: "PUT",
     success: () => callback(),
+  })
+}
+
+function refreshMessagesBadge() {
+  $.get("/api/chats", { unreadOnly: true }, (data) => {
+    // console.log("unread chat :", data.length)
+    let numResults = data.length
+
+    if (numResults > 0) {
+      $("#messagesBadge").text(numResults).addClass("active")
+    } else {
+      $("#messagesBadge").text("").removeClass("active")
+    }
+  })
+}
+
+function refreshNotificationsBadge() {
+  $.get("/api/notifications", { unreadOnly: true }, (data) => {
+    // console.log("unread notification:", data.length)
+
+    let numResults = data.length
+
+    if (numResults > 0) {
+      $("#notificationBadge").text(numResults).addClass("active")
+    } else {
+      $("#notificationBadge").text("").removeClass("active")
+    }
   })
 }
