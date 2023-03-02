@@ -7,7 +7,9 @@
   --green: #90a93a;
   --greenLight: #b4ca65;
   --blueGreen: #397884;
+  --blueGreenLight: #6fa4b6;
   --blueGreenBackground: #a7d8e1;
+  --blueGreenBackground-Whiter: #d9e9f2;
   --pink: #dabcb4;
   --buttonHoverBg: #d4edff;
   --lightGrey: rgb(230, 236, 240);
@@ -777,4 +779,12 @@ button span {
 .loadingSpinnerContainer img {
   width: 50%;
   max-width: 75px;
+}
+
+.resultListItem.active {
+  background-color: var(--blueGreenBackground-Whiter);
+}
+
+.resultListItem.notification * {
+  pointer-events: none;
 }
