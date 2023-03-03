@@ -9,15 +9,6 @@ $(document).ready(() => {
   refreshNotificationsBadge()
 })
 
-// hide img which src is empty //then the img preview won't work
-// $(document).ready(function () {
-//   $("img")
-//     .filter(function () {
-//       return !this.getAttribute("src")
-//     })
-//     .css("display", "none")
-// })
-
 //img preview
 function readURL(input) {
   if (input.files && input.files[0]) {
@@ -25,21 +16,12 @@ function readURL(input) {
 
     reader.onload = function (e) {
       $("#blah").attr("src", e.target.result)
+      $("#blah").addClass("active")
     }
 
     reader.readAsDataURL(input.files[0])
   }
 }
-
-//hide the img element if user didn't upload img file //doesn't work
-// let imgbox = $("#blah")
-// imgbox.onload = function () {
-//   if (img.src) {
-//     img.style.display = "block"
-//   } else {
-//     img.style.display = "none"
-//   }
-// }
 
 $("#postTextarea,#replyTextarea").keyup((event) => {
   let textbox = $(event.target)
@@ -96,6 +78,9 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
         imgbox.src = ""
         fileInput.setAttribute("src", "")
         button.prop("disabled", true)
+        $("#blah").removeClass("active")
+        $("#blah").attr("src", "")
+        fileInput.value = ""
       })
     }
     console.log("data in comman.js, the FE:", data)
@@ -105,12 +90,20 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
       let id = button.data().id
       if (id == null) return alert("Button id is null")
       data.replyTo = id
+
+      $("#blah").removeClass("active")
+      $("#blah").attr("src", "")
+      fileInput.value = ""
     }
 
     $.post("/api/posts", data, (postData, status, xhr) => {
       // console.log("postData in commona.js line26:", postData)
       if (postData.replyTo) {
         emitNotification(postData.replyTo.postedBy)
+        $("#blah").removeClass("active")
+        $("#blah").attr("src", "")
+        fileInput.value = ""
+
         location.reload()
       } else {
         let html = createPostHtml(postData)
@@ -119,6 +112,9 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
         imgbox.src = ""
         fileInput.setAttribute("src", "")
         button.prop("disabled", true)
+        $("#blah").removeClass("active")
+        $("#blah").attr("src", "")
+        fileInput.value = ""
       }
     })
   }
@@ -533,6 +529,13 @@ function createPostHtml(postData, largeFont = false) {
                 <button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`
   }
 
+  let imgHtml = ""
+  if (postData.imageUrl) {
+    imgHtml = `<img src="${postData.imageUrl}" alt="image" class="postedImg">`
+  } else {
+    imgHtml = `<img class="postedImg-hide">`
+  }
+
   return `<div class='post ${largeFontClass}' data-id="${postData._id}">
                 <div class='postActionContainer'>
                     ${retweetText}
@@ -557,9 +560,7 @@ function createPostHtml(postData, largeFont = false) {
                         <div class='postBody'>
                             <span>${postData.content}</span>
                             <br>
-                              <img src=${
-                                postData.imageUrl
-                              } alt="image" class="postedImg">
+                              ${imgHtml}
                         </div>
                         <div class='postFooter'>
                         <div class='postButtonContainer'>

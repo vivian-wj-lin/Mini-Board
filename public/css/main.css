@@ -812,3 +812,16 @@ button span {
 #messagesBadge.active {
   visibility: visible;
 }
+
+#blah {
+  display: none;
+}
+
+#blah.active {
+  visibility: visible;
+  display: block;
+}
+
+.postedImg-hide {
+  display: none;
+}
