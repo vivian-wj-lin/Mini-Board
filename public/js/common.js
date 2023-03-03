@@ -110,6 +110,7 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
     $.post("/api/posts", data, (postData, status, xhr) => {
       // console.log("postData in commona.js line26:", postData)
       if (postData.replyTo) {
+        emitNotification(postData.replyTo.postedBy)
         location.reload()
       } else {
         let html = createPostHtml(postData)
@@ -382,6 +383,7 @@ $(document).on("click", ".likeButton", (event) => {
       //   postData.likes.length
       // )
       button.find("span").text(postData.likes.length || "")
+      emitNotification(postData.postedBy)
     },
   })
 })
@@ -399,6 +401,7 @@ $(document).on("click", ".retweetButton", (event) => {
       // console.log("postData(retweet) in common.js line 125 :", postData)
 
       button.find("span").text(postData.retweetUsers.length || "")
+      emitNotification(postData.postedBy)
 
       setTimeout(() => {
         window.location.href = "/"
@@ -435,6 +438,7 @@ $(document).on("click", ".followButton", (event) => {
       if (data.following && data.following.includes(userId)) {
         button.addClass("following")
         button.text("Following")
+        emitNotification(userId)
       } else {
         button.removeClass("following")
         button.text("Follow")

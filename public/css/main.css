@@ -222,7 +222,7 @@ button span {
 .mainContentContainer {
   flex: 1;
   display: flex;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   /* then the scroll bar will kick in  */
 }
 
