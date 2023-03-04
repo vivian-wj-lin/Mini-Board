@@ -24,7 +24,13 @@ function createChatHtml(chatData) {
   let image = getChatImageElements(chatData)
   let latestMessage = getLatestMessage(chatData.latestMessage)
 
-  return `<a href='/messages/${chatData._id}' class='resultListItem'>
+  let activeClass =
+    !chatData.latestMessage ||
+    chatData.latestMessage.readBy.includes(userLoggedIn._id)
+      ? ""
+      : "active"
+
+  return `<a href='/messages/${chatData._id}' class='resultListItem ${activeClass}'>
                 ${image}
                 <div class='resultsDetailsContainer ellipsis'>
                     <span class='heading ellipsis'>${chatName}</span>
