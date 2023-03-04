@@ -6,10 +6,9 @@ const path = require("path")
 const bodyParser = require("body-parser")
 const session = require("express-session")
 const mongoose = require("./database")
+const http = require("http")
+const server = http.createServer(app)
 
-const server = app.listen(port, () =>
-  console.log("server is listening on port " + port)
-)
 const io = require("socket.io")(server, { pingTimeout: 60000 })
 
 app.set("view engine", "pug")
@@ -98,3 +97,5 @@ io.on("connection", (socket) => {
     })
   })
 })
+
+server.listen(port, () => console.log("server is listening on port " + port))
