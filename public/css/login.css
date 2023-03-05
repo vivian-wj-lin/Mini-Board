@@ -1,6 +1,13 @@
 body {
-  /* background-color: #0099ff; */
-  background-color: #397884;
+  /* background-color: #397884; */
+  background-color: white;
+}
+
+#loginImg {
+  margin-top: 100px;
+  margin-right: 10px;
+  width: 30%;
+  height: auto;
 }
 
 .wrapper {
@@ -10,6 +17,7 @@ body {
 }
 
 .loginContainer {
+  margin-top: 100px;
   padding: 20px;
   width: 80%;
   max-width: 500px;
@@ -43,4 +51,10 @@ input[type="submit"] {
   border: none;
   border-radius: 2px;
   margin-bottom: 10px;
+}
+
+@media (max-width: 1200px) {
+  #loginImg {
+    display: none;
+  }
 }
