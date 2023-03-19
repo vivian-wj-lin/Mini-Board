@@ -277,6 +277,14 @@ button span {
   border-radius: 50%;
 }
 
+.postButtonContainer.pink button.active {
+  color: var(--pink);
+}
+
+.postButtonContainer.blueGreen button.active {
+  color: var(--blueGreen);
+}
+
 .replyFlag {
   margin-bottom: 5px;
 }
