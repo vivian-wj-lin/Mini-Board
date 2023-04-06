@@ -13,13 +13,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 router.get("/", async (req, res, next) => {
   let searchObj = req.query
-  //value of the searchObj:  { postedBy: profileUserId }
-  // console.log("searchObj:", searchObj)
   if (searchObj.isReply !== undefined) {
     let isReply = searchObj.isReply == "true"
     searchObj.replyTo = { $exists: isReply }
     delete searchObj.isReply
-    // console.log("searchObj:", searchObj)
   }
 
   if (searchObj.search !== undefined) {
@@ -31,7 +28,6 @@ router.get("/", async (req, res, next) => {
 })
 
 router.get("/:id", async (req, res, next) => {
-  // return res.status(200).send("This is awesome")
   let postId = req.params.id
   let postData = await getPosts({ _id: postId })
   postData = postData[0]
@@ -44,20 +40,11 @@ router.get("/:id", async (req, res, next) => {
     results.replyTo = postData.replyTo
   }
 
-  results.replies = await getPosts({ replyTo: postId }) //filter passed into getPosts
-
-  // console.log("results.replies", results.replies)
+  results.replies = await getPosts({ replyTo: postId })
   res.status(200).send(results)
 })
 
 router.post("/", (req, res, next) => {
-  // console.log("req.body in BE:", req.body)
-  // console.log("req.body.content in BE:", req.body.content)
-  // if (req.body.replyTo) {
-  //   console.log("req.body.replyTo:", req.body.replyTo)
-  //   return res.sendStatus(400)
-  // }
-
   if (!req.body.content) {
     console.log("Content param not sent with request")
     return res.sendStatus(400)
@@ -74,7 +61,6 @@ router.post("/", (req, res, next) => {
       imgResult.replace(/^data:image\/\w+;base64,/, ""),
       "base64"
     )
-    // console.log("imageBuffer:", imageBuffer)
     const params = {
       Bucket: "msg-board-s3-bucket",
       Key: `msgboard/${time}`,
@@ -115,10 +101,8 @@ router.post("/", (req, res, next) => {
 
         Post.create(postData)
           .then(async (newPost) => {
-            // console.log("newPost created:", newPost)
             newPost = await User.populate(newPost, { path: "postedBy" })
             newPost = await Post.populate(newPost, { path: "replyTo" })
-            // console.log("newPost populated with User:", newPost)
 
             if (newPost.replyTo !== undefined) {
               await Notification.insertNotification(
@@ -176,10 +160,8 @@ router.post("/", (req, res, next) => {
 router.put("/:id/like", async (req, res, next) => {
   let postId = req.params.id
   let userId = req.session.user._id
-  // console.log("req.params.id in line 144:", req.params.id)
   let isLiked =
     req.session.user.likes && req.session.user.likes.includes(postId)
-  // console.log("isLiked:", isLiked)
 
   let option = isLiked ? "$pull" : "$addToSet"
 
@@ -271,7 +253,6 @@ router.post("/:id/retweet", async (req, res, next) => {
 })
 
 router.delete("/:id", (req, res, next) => {
-  // console.log("req.params.id:", req.params.id)
   Post.findByIdAndDelete(req.params.id)
     .then(() => res.sendStatus(202))
     .catch((error) => {
@@ -281,7 +262,6 @@ router.delete("/:id", (req, res, next) => {
 })
 
 router.put("/:id", async (req, res, next) => {
-  // console.log("req.params.id:", req.params.id)
   if (req.body.pinned !== undefined) {
     await Post.updateMany(
       { postedBy: req.session.user },

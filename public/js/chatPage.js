@@ -10,7 +10,6 @@ $(document).ready(() => {
     $("#chatName").text(getChatName(data))
   })
   $.get(`/api/chats/${chatId}/messages`, (data) => {
-    // console.log(data)
     let messages = []
     let lastSenderId = ""
 
@@ -100,12 +99,10 @@ function messageSubmitted() {
 }
 
 function sendMessage(content) {
-  //   console.log(content)
   $.post(
     "/api/messages",
     { content: content, chatId: chatId },
     (data, status, xhr) => {
-      //   console.log(data)
       if (xhr.status != 201) {
         alert("Could not send message.")
         $(".inputTextbox").val(content)

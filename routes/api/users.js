@@ -110,7 +110,6 @@ router.post(
       console.log("No file uploaded with ajax request.")
       return res.sendStatus(400)
     }
-    // console.log("req.file:", req.file)
     const time = Date.now()
 
     const params = {
@@ -150,7 +149,6 @@ router.post(
       console.log("No file uploaded with ajax request.")
       return res.sendStatus(400)
     }
-    // console.log("req.file:", req.file)
     const time = Date.now()
 
     const params = {

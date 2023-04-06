@@ -1,1 +1,0 @@
-# WeHelp_3_the-project

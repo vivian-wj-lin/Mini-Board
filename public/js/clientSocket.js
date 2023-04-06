@@ -10,7 +10,6 @@ socket.on("connect", () => (connected = true))
 socket.on("message received", (newMessage) => messageReceived(newMessage))
 
 socket.on("notification received", (newNotification) => {
-  // console.log("new notification")
   $.get("/api/notifications/latest", (notificationData) => {
     refreshNotificationsBadge()
   })

@@ -26,10 +26,7 @@ function readURL(input) {
 $("#postTextarea,#replyTextarea").keyup((event) => {
   let textbox = $(event.target)
   let value = textbox.val().trim()
-  // console.log("value:",value)
-
   let isModal = textbox.parents(".modal").length == 1
-
   let submitButton = isModal ? $("#submitReplyButton") : $("#submitPostButton")
 
   if (submitButton.length == 0) return alert("No submit button found")
@@ -71,7 +68,6 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
       console.log("data in comman.js, the FE:", data) //both txt and img
 
       $.post("/api/posts", data, (postData, status, xhr) => {
-        // console.log("postData from FE:", postData)
         let html = createPostHtml(postData)
         $(".postsContainer").prepend(html)
         textbox.val("") //clear the textbox after it is posted
@@ -97,7 +93,6 @@ $("#submitPostButton,#submitReplyButton").click((event) => {
     }
 
     $.post("/api/posts", data, (postData, status, xhr) => {
-      // console.log("postData in commona.js line26:", postData)
       if (postData.replyTo) {
         emitNotification(postData.replyTo.postedBy)
         $("#blah").removeClass("active")
@@ -140,21 +135,18 @@ $("#deletePostModal").on("show.bs.modal", (event) => {
   let button = $(event.relatedTarget)
   let postId = getPostIdFromElement(button)
   $("#deletePostButton").data("id", postId)
-  // console.log($("#deletePostButton").data().id)
 })
 
 $("#confirmPinModal").on("show.bs.modal", (event) => {
   let button = $(event.relatedTarget)
   let postId = getPostIdFromElement(button)
   $("#pinPostButton").data("id", postId)
-  // console.log($("#pinPostButton").data().id)
 })
 
 $("#unpinModal").on("show.bs.modal", (event) => {
   let button = $(event.relatedTarget)
   let postId = getPostIdFromElement(button)
   $("#unpinPostButton").data("id", postId)
-  // console.log($("#unpinPostButton").data().id)
 })
 
 $("#deletePostButton").click((event) => {
@@ -253,11 +245,8 @@ $("#imageUploadButton").click(() => {
     alert("無法上傳照片，請確認檔案格式")
     return
   }
-  // console.log("canvas:", canvas)
 
   canvas.toBlob((blob) => {
-    // console.log("blob:", blob)
-
     if (!blob) {
       console.log("Error: Empty blob.")
       return
@@ -292,11 +281,8 @@ $("#coverPhotoButton").click(() => {
     alert("無法上傳照片，請確認檔案格式")
     return
   }
-  // console.log("canvas:", canvas)
 
   canvas.toBlob((blob) => {
-    // console.log("blob:", blob)
-
     if (!blob) {
       console.log("Error: Empty blob.")
       return
@@ -348,7 +334,6 @@ $("#userSearchTextbox").keydown((event) => {
     if (value == "") {
       $(".resultsContainer").html("")
     } else {
-      //   console.log(value)
       searchUsers(value)
     }
   }, 1000)
@@ -367,7 +352,6 @@ $("#createChatButton").click(() => {
 $(document).on("click", ".likeButton", (event) => {
   let button = $(event.target)
   let postId = getPostIdFromElement(button)
-  // console.log(postId)
   if (postId === undefined) return
 
   $.ajax({
@@ -389,15 +373,12 @@ $(document).on("click", ".likeButton", (event) => {
 $(document).on("click", ".retweetButton", (event) => {
   let button = $(event.target)
   let postId = getPostIdFromElement(button)
-  // console.log(postId)
   if (postId === undefined) return
 
   $.ajax({
     url: `/api/posts/${postId}/retweet`,
     type: "POST",
     success: (postData) => {
-      // console.log("postData(retweet) in common.js line 125 :", postData)
-
       button.find("span").text(postData.retweetUsers.length || "")
 
       if (postData.retweetUsers.includes(userLoggedIn._id)) {
@@ -426,7 +407,6 @@ $(document).on("click", ".post", (event) => {
 $(document).on("click", ".followButton", (event) => {
   let button = $(event.target)
   let userId = button.data().user
-  // console.log("userId:", userId)
   $.ajax({
     url: `/api/users/${userId}/follow`,
     type: "PUT",
@@ -435,7 +415,6 @@ $(document).on("click", ".followButton", (event) => {
         alert("user not found")
         return
       }
-      // console.log("userLoggedIn data:", data)
 
       let difference = 1
 
@@ -486,8 +465,6 @@ function createPostHtml(postData, largeFont = false) {
   let isRetweet = postData.retweetData !== undefined
   let retweetedBy = isRetweet ? postData.postedBy.accountname : null
   postData = isRetweet ? postData.retweetData : postData
-
-  // console.log("isRetweet:", isRetweet)
 
   let postedBy = postData.postedBy
 
@@ -654,9 +631,6 @@ function outputPostsWithReplies(results, container) {
 
   //original post to which the main post replied
   if (results.replyTo !== undefined && results.replyTo._id !== undefined) {
-    // console.log("results:", results)
-    // console.log("results.replyTo:", results.replyTo)
-    // console.log("results.replyTo._id:", results.replyTo._id)
     let html = createPostHtml(results.replyTo)
     container.append(html)
   }
@@ -673,10 +647,8 @@ function outputPostsWithReplies(results, container) {
 }
 
 function outputUsers(results, container) {
-  // console.log("outputUsers data:", data)
   container.html("")
   results.forEach((result) => {
-    // console.log(result.username)
     let html = createUserHtml(result, true)
     container.append(html)
   })
@@ -752,7 +724,6 @@ function outputSelectableUsers(results, container) {
 }
 
 function userSelected(user) {
-  // console.log(user.username)
   selectedUsers.push(user)
   updateSelectedUsersHtml()
   $("#userSearchTextbox").val("").focus()
@@ -818,7 +789,6 @@ function markNotificationsAsOpened(notificationId = null, callback = null) {
 
 function refreshMessagesBadge() {
   $.get("/api/chats", { unreadOnly: true }, (data) => {
-    // console.log("unread chat :", data.length)
     let numResults = data.length
 
     if (numResults > 0) {
@@ -831,8 +801,6 @@ function refreshMessagesBadge() {
 
 function refreshNotificationsBadge() {
   $.get("/api/notifications", { unreadOnly: true }, (data) => {
-    // console.log("unread notification:", data.length)
-
     let numResults = data.length
 
     if (numResults > 0) {

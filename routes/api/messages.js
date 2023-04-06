@@ -24,7 +24,6 @@ router.post("/", async (req, res, next) => {
 
   Message.create(newMessage)
     .then(async (message) => {
-      //   console.log("message:", message)
       message = await Message.populate(message, { path: "sender" })
       message = await Message.populate(message, { path: "chat" })
       message = await User.populate(message, { path: "chat.users" })

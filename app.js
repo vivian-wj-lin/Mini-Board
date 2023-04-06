@@ -63,13 +63,10 @@ app.get("/", middleware.requireLogin, (req, res, next) => {
     userLoggedIn: req.session.user,
     userLoggedInJs: JSON.stringify(req.session.user),
   }
-  // console.log("user in session:", req.session.user)
-  // console.log(req.session.user["user_id"])
   res.status(200).render("home", payload)
 })
 
 io.on("connection", (socket) => {
-  // console.log("connected to socket io")
   socket.on("setup", (userData) => {
     socket.join(userData._id)
     socket.emit("connected")
@@ -92,7 +89,6 @@ io.on("connection", (socket) => {
       if (user._id == newMessage.sender._id) {
         return
       }
-      // console.log("user:", user)
       socket.in(user._id).emit("message received", newMessage)
     })
   })

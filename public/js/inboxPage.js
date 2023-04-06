@@ -9,7 +9,6 @@ $(document).ready(() => {
 })
 
 function outputChatList(chatList, container) {
-  //   console.log(chatList)
   chatList.forEach((chat) => {
     let html = createChatHtml(chat)
     container.append(html)
@@ -53,20 +52,16 @@ function getChatImageElements(chatData) {
 
   let groupChatClass = ""
   let chatImage = getUserChatImageElement(otherChatUsers[0])
-  //   console.log("chatImage:", chatImage)
 
   if (otherChatUsers.length > 1) {
     groupChatClass = "groupChatImage"
     chatImage += getUserChatImageElement(otherChatUsers[1])
-    // console.log("chatImage:", chatImage)
   }
 
   return `<div class="resultsImageContainer ${groupChatClass}">${chatImage}</div>`
 }
 
 function getUserChatImageElement(user) {
-  //   console.log("user:", user)
-  //   console.log("user.profilePic:", user.profilePic)
   if (!user || !user.profilePic) {
     return alert("User passed into function is invalid")
   }

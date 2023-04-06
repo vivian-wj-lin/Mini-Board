@@ -67,7 +67,6 @@ router.get("/:chatId", async (req, res, next) => {
   res.status(200).render("chatPage", payload)
 })
 
-// the one-on-one envelope icon chat
 function getChatByUserId(userLoggedInId, otherUserId) {
   return Chat.findOneAndUpdate(
     //filters
@@ -78,8 +77,6 @@ function getChatByUserId(userLoggedInId, otherUserId) {
         $all: [
           { $elemMatch: { $eq: mongoose.Types.ObjectId(userLoggedInId) } },
           { $elemMatch: { $eq: mongoose.Types.ObjectId(otherUserId) } },
-          //   { $elemMatch: { $eq: userLoggedInId } },
-          //   { $elemMatch: { $eq: otherUserId } },
         ],
       },
     },
