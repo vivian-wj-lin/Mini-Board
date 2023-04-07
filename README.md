@@ -4,6 +4,20 @@ is a simple social website with the features of posting text and image messages,
 <br><br>
 <img src="https://github.com/vivian-wj-lin/Images/blob/main/miniBoard_screenshot.jpg" width="50%" height="50%">
 
+<p>Test Account</p>
+<table style="width:100%">
+  <tr>
+  	<td>account</td>
+    <td>test</td>
+    <td>test2</td>
+  </tr>
+  <tr>
+  	<td>password</td>
+    <td>test</td>
+    <td>test2</td>
+  </tr>
+</table>
+
 <h1>Architecture</h1>
 <br>
 <img src="https://github.com/vivian-wj-lin/Images/blob/main/miniBoard_architecture.jpg" width="65%" height="65%">
