@@ -1,0 +1,31 @@
+extends layouts/login-layout.pug
+
+block content
+    .loginContainer
+        h1 Register 註冊
+        form#registerForm(method="post" onsubmit="event.preventDefault(); validateForm();")
+
+            p.errorMessage #{errorMessage}
+
+            input(type="text" name="username" placeholder="Username 姓名/暱稱", value=username required="")
+            input(type="text" name="accountname" placeholder="Account name 帳戶名稱", value=accountname required="")
+            input(type="email" name="email" placeholder="Email 電子郵件", value=email required="")
+            input#password(type="password" name="password" placeholder="Password 密碼" required="")
+            input#passwordConf(type="password" name="passwordConf" placeholder="Confirm password 再次確認密碼" required="")
+            input(type="submit" value="register 註冊")
+
+        a(href="/login") Already have an account 已有帳號? Login here.點我登入
+
+    script.
+        let passwordField = document.getElementById("password")
+        let passwordConfirmField = document.getElementById("passwordConf")
+        let form = document.getElementById("registerForm")
+
+        function validateForm() {
+            if(passwordField.value != passwordConfirmField.value) {
+                alert("密碼不符合，請再次輸入")
+            }
+            else {
+                form.submit();
+            }
+        }

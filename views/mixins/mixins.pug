@@ -1,0 +1,180 @@
+mixin createPostForm(userLoggedIn)
+    .postFormContainer
+        .userImageContainer
+            img(src=userLoggedIn.profilePic, alt="User's profile picture")
+        .textareaContainer
+            textarea#postTextarea(placeholder="What's happening?")
+            img#blah(src="" alt='圖片預覽' style="width: 200px; height: 200px; margin-bottom:20px; display: #{src === '' ? 'none' : 'block'}")
+
+
+
+            .imgBtnContainer
+                label(for="input-img")
+                    i.fa.fa-upload#uploadImgClass
+                    input(type="file" id="input-img" name="input-img" accept="image/*" style='display:none;' onchange="readURL(this);")
+
+                    //- input(type='submit')
+
+                //- i.fa-solid.fa-border-all
+                //- select#category(name='category')
+                //-     option(value='books') 衣物
+                //-     option(value='electronics') 電器
+                //-     option(value='furniture') 家具
+                //-     option(value='clothing') 書籍
+                //-     option(value='other') 生活用品
+                //-     option(value='other') 其他
+
+
+                .buttonsContainer
+                    button#submitPostButton(disabled="") Post
+
+
+mixin createReplyModal(userLoggedIn)
+    #replyModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='replyModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#replyModalLabel.modal-title Reply
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    #originalPostContainer
+                    .postFormContainer
+                        .userImageContainer
+                            img(src=userLoggedIn.profilePic, alt="User's profile picture")
+                        .textareaContainer
+                            textarea#replyTextarea(placeholder="What's happening?")
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                    button#submitReplyButton.btn.btn-primary(type='button' disabled="") Reply
+
+mixin createDeletePostModal()
+    #deletePostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deletePostModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#deletePostModalLabel.modal-title Delete the post?
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    p You won't be able to delete this.
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                    button#deletePostButton.btn.btn-primary(type='button') Delete
+
+mixin createPostModals(userLoggedIn)
+    +createReplyModal(userLoggedIn)
+    +createDeletePostModal()
+    +createPinnedPostModal()
+    +createUnpinPostModal()
+
+mixin createFollowButton(user, isFollowing)
+    - text = isFollowing ? "Following" : "Follow"
+    - buttonClass = isFollowing ? "followButton following" : "followButton"
+    button(class=buttonClass, data-user=user._id) #{text}
+
+mixin createTab(name,href,isSelected)
+    -className=isSelected ? "tab active":"tab"
+    a(href=href, class=className)
+        span #{name}
+
+
+mixin createImageUploadModal()
+    #imageUploadModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='imageUploadModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#imageUploadModalLabel.modal-title 上傳大頭照
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    input#filePhoto(type="file" name="filePhoto")
+
+                    .imagePreviewContainer
+                        img#imagePreview
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                    button#imageUploadButton.btn.btn-primary(type='button') 儲存
+
+
+mixin createCoverPhotoUploadModal()
+    #coverPhotoUploadModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='coverPhotoModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#coverPhotoModalLabel.modal-title 上傳封面照片
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    input#coverPhoto(type="file" name="filePhoto")
+
+                    .imagePreviewContainer
+                        img#coverPreview
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                    button#coverPhotoButton.btn.btn-primary(type='button') 儲存
+
+mixin createPinnedPostModal()
+    #confirmPinModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='confirmPinModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#confirmPinModalLabel.modal-title 置頂貼文?
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    p 置頂貼文，只能置頂一則貼文
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                    button#pinPostButton.btn.btn-primary(type='button') 置頂
+
+mixin createUnpinPostModal()
+    #unpinModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='unpinModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#unpinModalLabel.modal-title 取消置頂貼文?
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    p 取消置頂
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                    button#unpinPostButton.btn.btn-primary(type='button') 確定
+
+mixin createChatImage(chatData, userLoggedIn)
+    if(!chatData)
+        return
+
+    - let i = 0
+    - let maxImagesToShow = 3
+    - let remainingUsers = chatData.users.length - maxImagesToShow
+    - remainingUsers-- // remove 1 (user's own image)
+
+    .chatImagesContainer
+        if remainingUsers > 0
+            .userCount
+                span +#{remainingUsers}
+
+        each user in chatData.users
+            if chatData.users.length != 1 && user._id == userLoggedIn._id
+                - continue
+            else if i >= maxImagesToShow    
+                - break
+
+            img(src=user.profilePic, alt="User's profile picture", title=user.username)
+            - i++
+
+mixin createChatNameModal(chat)
+    #chatNameModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='chatNameModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#chatNameModalLabel.modal-title 命名聊天室?
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                .modal-body
+                    input#chatNameTextbox(type="text" placeholder="Enter a name for this chat", value=chat.chatName)
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') 取消
+                    button#chatNameButton.btn.btn-primary(type='button') 確定

@@ -1,0 +1,18 @@
+extends layouts/main-layout.pug
+
+block content
+
+  .searchBarContainer
+    i.fas.fa-search
+    input#searchBox(type="text" name="searchBox", data-search=selectedTab, placeholder="搜尋使用者名稱或貼文")
+
+  .tabsContainer
+    +createTab("Posts 貼文",`/search/posts`, selectedTab != users)
+    +createTab("Users 使用者",`/search/users`, selectedTab == users)
+
+  .resultsContainer
+
+  +createPostModals(userLoggedIn)
+
+block scripts
+  script(src="/js/search.js")
